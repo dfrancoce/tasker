@@ -1,0 +1,186 @@
+/**
+ * @fileOverview CSS used in tasker
+ * @author <a href="mailto:danielfrancocecilia@gmail.com">Daniel Franco</a>
+ * @version 1.0
+ * @since 1.0
+ */
+
+/* ============= Structure ============= */
+body {
+    background-color: FFFFDD;
+    position: relative;
+    height: auto;    
+    min-height: 100% !important;
+    overflow-y: auto;
+}
+
+div.menu, div.title {
+    margin: 0 auto;  
+    width: 50%;
+}
+
+div.title span {
+    vertical-align: middle;
+    font-size: 20pt;    
+    border-bottom: medium none;
+    color: #C3C36E;
+    font-family: Georgia;
+    font-weight: bold;
+    letter-spacing: 1em;
+    text-decoration: none;
+    text-transform: uppercase;
+}
+
+div.main
+{
+    margin: 0 auto;
+    position: relative;
+    height: auto;
+    min-height: 80% !important;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+div.board {
+    margin-left: 10px;
+    width: 80%;
+    position: relative;
+    height: auto;
+    min-height: 80% !important;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+div.board_toDo, div.board_progress, div.board_finished {
+    width: 33%;
+    float: left;
+    position: relative;
+    height: auto;
+    min-height: 80% !important;
+    overflow-y: auto;
+    border: #a6c9e2 1px solid;
+    overflow-x: hidden;
+}
+
+div.board_toDo span.title, div.board_progress span.title, div.board_finished span.title {
+    margin-left: 10px;    
+    font-size: 12pt;
+    font-family: Georgia;
+    font-weight: lighter;
+    letter-spacing: 0.2em;
+    color: #666666;
+    vertical-align:bottom;
+    text-align: center;
+    float: left;
+}
+
+div.subTitle {
+    float: left;
+    width: 100%;
+}
+/* ===================================== */
+
+/* ============== Dialogs ============== */
+
+div.dialog_hidden {
+    display: none;    
+    overflow-x: hidden;
+}
+
+div.dialog {
+    display: block;    
+    overflow-x: hidden;
+}
+
+/* ===================================== */
+
+/* =============== Images ============== */
+
+img.icon {
+    height:24px;
+    width:24px;
+    vertical-align: middle;
+    background-color: transparent;
+}
+
+img.iconDialogMessage {
+    height:36px;
+    width:36px;
+    vertical-align: middle;
+    background-color: transparent;
+}
+
+img.iconDel, img.iconEdit
+{    
+    cursor:pointer;
+    height:24px;
+    width:24px;
+    vertical-align: middle;
+    background-color: transparent;
+}
+/* ===================================== */
+
+/* ================ Tables ============= */
+table.tasks
+{
+    border-style: solid;
+    border-color: #4682B4;
+    border-width: 1.2px;
+    border-radius: 4px;
+    padding: 0px 5px;
+    margin-left:0.5em;
+    margin-top: 0.5em;    
+    background-color: white;
+    float: left;
+}
+/* ===================================== */
+
+/* ================ Texts ============== */
+span, label, input.text, textarea.text, select.text {
+    font-family: Helvetica;
+    font-size: 8pt;
+    font-weight: lighter;
+}
+
+label.text {
+    display: inline-block;
+    width: 80px;
+}
+
+span.taskName
+{
+    display: inline-block;    
+    text-align: left;
+    cursor: pointer;
+    font-family: Century Gothic;
+    font-weight: lighter;
+    font-size: 8pt;
+    color: #4682B4;    
+}
+
+ul
+{
+    padding-left: 0px;
+    overflow-x:hidden;
+    white-space:nowrap;
+    height: 2em;
+    width: 100%;
+}
+
+li
+{
+    display:inline;    
+}
+
+li > a {
+    cursor: pointer;
+    font-size: 10pt;
+    font-family: Georgia;
+    font-weight: lighter;    
+    color: #666666;
+}
+/* ===================================== */
+
+a.selected {
+    color: #C3C36E;
+}

@@ -1,0 +1,129 @@
+<html xmlns="http://www.w3.org/1999/xhtml" >
+<head id="Tasker_H" runat="server">
+    <title>Tasker</title>
+    <link rel="icon" type="image/png" href="./img/fav_tasker.png" />
+    <link rel="stylesheet" href="./css/jquery-ui-1.9.2.custom.css" type="text/css" />
+    <link rel="stylesheet" href="./css/tasker.css" type="text/css" />
+    <script src ="./lib/jquery-1.7.2.min.js"  language="javascript" type = "text/javascript"></script>    
+    <script src ="./lib/jquery-ui-1.9.2.custom.min.js" type="text/javascript" charset="utf-8"></script>
+    <script src ="./js/db.js" language="javascript" type = "text/javascript"></script>
+    <script src ="./js/data.js" language="javascript" type = "text/javascript"></script>
+    <script src ="./js/gui.js" language="javascript" type = "text/javascript"></script>    
+    <script src ="./js/tasker.js" language="javascript" type = "text/javascript"></script>    
+</head>
+<body>
+    <div class = "title"><span> Tasker</span></div>
+    <div class = "menu">        
+        <ul>
+            <li><a class = "newTask"> New task</a>-</li>
+            <li><a class = "newProject"> New project</a>-</li>
+            <li><a class = "newUser"> New user</a>-</li>
+            <li><a class = "filter"> Filter</a></li>
+        </ul>
+    </div>
+    <div class = "main">
+        <div class = "board">
+            <div class = "board_toDo droppableToDo ui-widget-content ui-state-default">
+                <div class = "subTitle"><span class = "title"> To do</span></div>
+            </div>
+            <div class = "board_progress droppableInProgress ui-widget-content ui-state-default">
+                <div class = "subTitle"><span class = "title"> In progress</span></div>
+            </div>
+            <div class = "board_finished droppableFinished ui-widget-content ui-state-default">
+                <div class = "subTitle"><span class = "title"> Finished</span></div>
+            </div>
+        </div>        
+    </div>
+
+    <!-- =========================== NEW TASK =========================== -->
+    <div id = "dialog_newTask" class = "dialog_hidden">
+        <div style = "margin-top: 10px">
+            <div>
+                <label class = "text" for = "txtCode">Code: </label>
+                <input type = "text" class = "text" name = "txtCode" id = "txtCode" value = "" style = "width: 50px" />
+            </div>
+
+            <div>
+                <label class = "text" for = "txtName">Name: </label>
+                <input type = "text" class = "text" name = "txtName" id = "txtName" value = "" style = "width: 250px" />
+            </div>
+
+            <div>
+                <label class = "text" for = "txtDescription">Description: </label>
+                <textarea class = "text" name = "txtDescription" id = "txtDescription" rows = "6" cols = "35" style = "margin-left:0px"></textarea>                
+            </div>
+
+            <div>
+                <label class = "text" for = "cmbProject">Project: </label>
+                <select class = "text" name = "cmbProject" id = "cmbProject" style = "width: 250px">
+                    <option value = ""></option>
+                </select>
+            </div>
+
+            <div>
+                <label class = "text" for = "cmbPriority">Priority: </label>
+                <select class = "text" name = "cmbPriority" id = "cmbPriority" style = "width: 250px">
+                    <option value = ""></option>
+                </select>                
+            </div>
+
+            <div>
+                <label class = "text" for = "cmbType">Type: </label>
+                <select class = "text" name = "cmbType" id = "cmbType" style = "width: 250px">
+                    <option value = ""></option>
+                </select>
+            </div>
+
+            <div>
+                <label class = "text" for = "txtEstimation">Estimation: </label>
+                <input type = "text" class = "text" name = "txtEstimation" id = "txtEstimation" value = "" style = "width: 50px" />
+            </div>
+
+            <div>
+                <label class = "text" for = "txtIncurred">Incurred: </label>
+                <input type = "text" class = "text" name = "txtIncurred" id = "txtIncurred" value = "" style = "width: 50px" />
+            </div>
+
+            <div>
+                <label class = "text" for = "cmbAssignedTo">Assigned To: </label>
+                <select class = "text" name = "cmbAssignedTo" id = "cmbAssignedTo" style = "width: 250px">
+                    <option value = ""></option>
+                </select>                
+            </div>
+        </div>
+    </div>    
+    <!-- ================================================================ -->
+
+    <!-- ========================= NEW PROJECT ========================== -->
+    <div id = "dialog_newProject" class = "dialog_hidden">                
+        <div style = "margin-top: 10px">
+            <div>
+                <label class = "text" for = "txtCode">Code: </label>
+                <input type = "text" class = "text" name = "txtCode" id = "txtCode" value = "" style = "width: 50px" />
+            </div>
+
+            <div>
+                <label class = "text" for = "txtProject">Project: </label>
+                <input type = "text" class = "text" name = "txtProject" id = "txtProject" value = "" style = "width: 250px" />
+            </div>
+        </div>
+    </div>
+    <!-- ================================================================ -->
+
+    <!-- ========================== NEW USER ============================ -->
+    <div id = "dialog_newUser" class = "dialog_hidden">                
+        <div style = "margin-top: 10px">
+            <div>
+                <label class = "text" for = "txtCode">Code: </label>
+                <input type = "text" class = "text" name = "txtCode" id = "txtCode" value = "" style = "width: 50px" />
+            </div>
+
+            <div>
+                <label class = "text" for = "txtUserName">User: </label>
+                <input type = "text" class = "text" name = "txtUserName" id = "txtUserName" value = "" style = "width: 250px" />
+            </div>
+        </div>
+    </div>
+    <!-- ================================================================ -->
+</body>
+</html>
