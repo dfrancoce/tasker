@@ -7,28 +7,17 @@
  * @since 1.0
  */
 
- /* =====================================
-  *	 _____         _                 
-  *	|  _  (_)     | |                
-  *	| | | |_  __ _| | ___   __ _ ___ 
-  *	| | | | |/ _` | |/ _ \ / _` / __|
-  *	| |/ /| | (_| | | (_) | (_| \__ \
-  *	|___/ |_|\__,_|_|\___/ \__, |___/
-  *	                        __/ |    
-  *	                       |___/     
-  * ===================================== */
-
- /**
+/**
  * Generates "New Task" dialog with the info
- * to be filled by the user  
- * @public 
+ * to be filled by the user
+ * @public
  *
  * @param dialog DIV used as dialog
- * @returns dialog DOM element     
+ * @returns dialog DOM element
  */
- function showNewTaskDialog(dialog) {
+function showNewTaskDialog(dialog) {
     "use strict";
-     $(dialog).dialog({
+    $(dialog).dialog({
         width: "400",
         height: "auto",
         modal: true,
@@ -36,21 +25,24 @@
         position: ["center", 150],
         autoOpen: false,
         resizable: false,
-        hide: {effect: 'fold', duration: 500}
+        hide: {
+            effect: 'fold',
+            duration: 500
+        }
     });
 
-     return $(dialog);
- }
+    return $(dialog);
+}
 
 /**
  * Generates "New Project" dialog with the info
- * to be filled by the user 
- * @public 
+ * to be filled by the user
+ * @public
  *
  * @param dialog DIV used as dialog
- * @returns dialog DOM element     
+ * @returns dialog DOM element
  */
- function showNewProjectDialog(dialog) {
+function showNewProjectDialog(dialog) {
     "use strict";
     $(dialog).dialog({
         width: "400",
@@ -60,21 +52,24 @@
         position: ["center", 250],
         autoOpen: false,
         resizable: false,
-        hide: {effect: 'fold', duration: 500}
+        hide: {
+            effect: 'fold',
+            duration: 500
+        }
     });
 
     return $(dialog);
- }
+}
 
 /**
  * Generates "New User" dialog with the info
- * to be filled by the user 
- * @public 
+ * to be filled by the user
+ * @public
  *
  * @param dialog DIV used as dialog
- * @returns dialog DOM element     
+ * @returns dialog DOM element
  */
- function showNewUserDialog(dialog) {
+function showNewUserDialog(dialog) {
     "use strict";
     $(dialog).dialog({
         width: "400",
@@ -84,23 +79,26 @@
         position: ["center", 250],
         autoOpen: false,
         resizable: false,
-        hide: {effect: 'fold', duration: 500}
+        hide: {
+            effect: 'fold',
+            duration: 500
+        }
     });
 
     return $(dialog);
- }
+}
 
 /**
  * Generates delete dialog to confirm
- * the elimination 
- * @public 
- * 
- * @returns dialog DOM element     
+ * the elimination
+ * @public
+ *
+ * @returns dialog DOM element
  */
- function showDeleteDialog() {
+function showDeleteDialog() {
     "use strict";
     var dialog, icon, message;
-        
+
     dialog = $(document.createElement('div'));
     icon = $(document.createElement('img'));
     message = $(document.createElement('span'));
@@ -120,14 +118,17 @@
         position: ["center", 250],
         autoOpen: false,
         resizable: false,
-        hide: {effect: 'fold', duration: 500}
+        hide: {
+            effect: 'fold',
+            duration: 500
+        }
     });
 
     return $(dialog);
- }
+}
 
 /**
- * Opens a "New Task" dialog 
+ * Opens a "New Task" dialog
  * @public
  *
  * @param {Object} dialog div that acts like a popup window
@@ -135,28 +136,85 @@
 function openNewTaskDialog(dialog) {
     "use strict";
     var dlg_newTask;
-    
-    dlg_newTask = showNewTaskDialog(dialog);     
+
+    dlg_newTask = showNewTaskDialog(dialog);
+    setNewTaskDialogFields(null);
 
     $(dlg_newTask).unbind("dialogclose");
-    $(dlg_newTask).bind("dialogclose", function (event, ui) {
+    $(dlg_newTask).bind("dialogclose", function(event, ui) {
         $(dialog).removeClass("dialog");
         $(dialog).addClass("dialog_hidden");
     });
 
     $(dlg_newTask).dialog("open");
     $(dlg_newTask).dialog("option", "buttons", {
-        "Save": function () {
+        "Save": function() {
+            var $el;
+            var oTask = {
+                "code": "",
+                "name": "",
+                "description": "",
+                "state": "1",
+                "project": "",
+                "priority": "",
+                "type": "",
+                "estimation": "",
+                "incurred": "",
+                "assignedTo": ""
+            };
+
+            updateTask(dialog, oTask);
+            addTask(oTask);
+
+            $el = generateTaskElement(oTask.code + '-' + oTask.name, "toDo");
+            stickTask($el, "toDo");
+
             $(this).dialog("close");
         },
-        "Cancel": function () {
+        "Cancel": function() {
             $(this).dialog("close");
         }
     });
 }
 
 /**
- * Opens a "New Project" dialog 
+ * Open an "Edit Task" dialog. Reuses showNewTaskDialog function.
+ *
+ * @public
+ *
+ * @param {Object} dialog div that acts like a popup window
+ * @param {Object} oTask Object to be updated
+ * @param {Object} span DOM with the code-name title to be updated
+ */
+function openEditTaskDialog(dialog, oTask, taskTitle) {
+    "use strict";
+    var dlg_editTask, task_code, task_name, task;
+
+    dlg_editTask = showNewTaskDialog(dialog);
+    setNewTaskDialogFields(oTask);
+
+    $(dlg_editTask).unbind("dialogclose");
+    $(dlg_editTask).bind("dialogclose", function(event, ui) {
+        $(dialog).removeClass("dialog");
+        $(dialog).addClass("dialog_hidden");
+    });
+
+    $(dlg_editTask).dialog("open");
+    $(dlg_editTask).dialog("option", "title", "<img class = 'icon' src = './img/task.png'/> Edit Task");
+    $(dlg_editTask).dialog("option", "buttons", {
+        "Save": function() {
+            updateTask(dialog, oTask);
+            $(taskTitle).text(oTask.code + "-" + oTask.name);
+            $(this).dialog("close");
+        },
+        "Cancel": function() {
+            $(this).dialog("close");
+        }
+    });
+}
+
+/**
+ * Opens a "New Project" dialog
  * @public
  *
  * @param {Object} dialog div that acts like a popup window
@@ -164,19 +222,22 @@ function openNewTaskDialog(dialog) {
 function openNewProjectDialog(dialog) {
     "use strict";
     var dlg_newProject;
-    
-    dlg_newProject = showNewProjectDialog(dialog);    
+
+    dlg_newProject = showNewProjectDialog(dialog);
 
     $(dlg_newProject).unbind("dialogclose");
-    $(dlg_newProject).bind("dialogclose", function (event, ui) {
+    $(dlg_newProject).bind("dialogclose", function(event, ui) {
         $(dialog).removeClass("dialog");
         $(dialog).addClass("dialog_hidden");
     });
 
     $(dlg_newProject).dialog("open");
     $(dlg_newProject).dialog("option", "buttons", {
-        "Save": function () {
-            var project = { code: $("#txtCode").val() , name: $("#txtProject").val() };
+        "Save": function() {
+            var project = {
+                code: $("#txtCode").val(),
+                name: $("#txtProject").val()
+            };
 
             taskerDB.indexedDB.addProject(project);
             taskerDB.indexedDB.getProject($("#txtCode").val());
@@ -185,14 +246,14 @@ function openNewProjectDialog(dialog) {
             //taskerDB.indexedDB.getProject(2);
             //$(this).dialog("close");
         },
-        "Cancel": function () {
+        "Cancel": function() {
             $(this).dialog("close");
         }
     });
 }
 
 /**
- * Opens a "New User" dialog 
+ * Opens a "New User" dialog
  * @public
  *
  * @param {Object} dialog div that acts like a popup window
@@ -200,45 +261,37 @@ function openNewProjectDialog(dialog) {
 function openNewUserDialog(dialog) {
     "use strict";
     var dlg_newUser;
-    
+
     dlg_newUser = showNewUserDialog(dialog);
 
     $(dlg_newUser).unbind("dialogclose");
-    $(dlg_newUser).bind("dialogclose", function (event, ui) {        
+    $(dlg_newUser).bind("dialogclose", function(event, ui) {
         $(dialog).removeClass("dialog");
         $(dialog).addClass("dialog_hidden");
     });
 
     $(dlg_newUser).dialog("open");
     $(dlg_newUser).dialog("option", "buttons", {
-        "Save": function () {            
+        "Save": function() {
             $(this).dialog("close");
         },
-        "Cancel": function () {
+        "Cancel": function() {
             $(this).dialog("close");
         }
     });
 }
 
-/* =================================
- *	___  ___                 
- *	|  \/  |                 
- *	| .  . | ___ _ __  _   _ 
- *	| |\/| |/ _ \ '_ \| | | |		
- *	| |  | |  __/ | | | |_| |		
- *	\_|  |_/\___|_| |_|\__,_|       
- *									
- * ================================= */
+/**
+ * Handles the menu clicks
+ * @public
+ */
+function handleMenu() {
+    "use strict";
 
- /**
-  * Handles the menu clicks 
-  * @public 
-  */
-function handleMenu() {    
     $("a.newTask").click(function() {
         var dialog;
 
-        dialog = $("#dialog_newTask");        
+        dialog = $("#dialog_newTask");
         $(dialog).addClass("dialog");
         $(dialog).removeClass("dialog_hidden");
         openNewTaskDialog($(dialog));
@@ -263,7 +316,7 @@ function handleMenu() {
     });
 
     $("li > a").on("hover", function(e) {
-        if(e.type === "mouseenter") {
+        if (e.type === "mouseenter") {
             $(this).addClass("selected");
         } else if (e.type === "mouseleave") {
             $(this).removeClass("selected");
@@ -273,49 +326,131 @@ function handleMenu() {
 
 /**
  * Sets the behaviour of the "draggable" elements
- * @public    
+ * @public
  */
-function setDraggables() {	
-	"use strict";
-	$('.draggable').draggable({
-		cancel: "a.ui-icon",
+function setDraggables() {
+    "use strict";
+    $('.draggable').draggable({
+        cancel: "a.ui-icon",
         revert: "false",
         containment: "document",
         helper: "clone",
         cursor: "move",
-        scroll: false        
+        scroll: false
     });
 }
 
 /**
  * Sets the behaviour of the "droppable" elements
- * @public    
+ * @public
  */
 function setDroppables() {
-	"use strict";
-	$("div.droppableToDo").droppable({
-	    accept: 'span.progress, span.finished',
-	    activeClass: "ui-state-highlight",
-	    drop: function (event, ui) {
-	        stickTask(ui.draggable, "toDo");
-	    }
-	});
+    "use strict";
+    $("div.droppableToDo").droppable({
+        accept: 'span.progress, span.finished',
+        activeClass: "ui-state-highlight",
+        drop: function(event, ui) {
+            stickTask(ui.draggable, "toDo");
+        }
+    });
 
-	$("div.droppableInProgress").droppable({
-	    accept: 'span.toDo, span.finished',
-	    activeClass: "ui-state-highlight",
-	    drop: function (event, ui) {
-	        stickTask(ui.draggable, "progress");
-	    }
-	});
+    $("div.droppableInProgress").droppable({
+        accept: 'span.toDo, span.finished',
+        activeClass: "ui-state-highlight",
+        drop: function(event, ui) {
+            stickTask(ui.draggable, "progress");
+        }
+    });
 
-	$("div.droppableFinished").droppable({
-	    accept: 'span.toDo, span.progress',
-	    activeClass: "ui-state-highlight",
-	    drop: function (event, ui) {
-	        stickTask(ui.draggable, "finished");
-	    }
-	});
+    $("div.droppableFinished").droppable({
+        accept: 'span.toDo, span.progress',
+        activeClass: "ui-state-highlight",
+        drop: function(event, ui) {
+            stickTask(ui.draggable, "finished");
+        }
+    });
+}
+
+/**
+ * Sets the content of the combos fields in the New Task (Edit Task)
+ * view
+ * @public
+ *
+ * @param oTask. Object task used to set the selected values
+ */
+function setNewTaskDialogCombos(oTask) {
+    "use strict";
+    // Projects 
+    for (var i = 0, len = projects.length; i < len; i++) {
+        $("select[name$='cmbProject']")[0].options[i] = new Option(
+            projects[i].name,
+            projects[i].code
+        );
+    }
+
+    // Priorities
+    for (var i = 0, len = priorities.length; i < len; i++) {
+        $("select[name$='cmbPriority']")[0].options[i] = new Option(
+            priorities[i].name,
+            priorities[i].code
+        );
+    }
+
+    // Types
+    for (var i = 0, len = types.length; i < len; i++) {
+        $("select[name$='cmbType']")[0].options[i] = new Option(
+            types[i].name,
+            types[i].code
+        );
+    }
+
+    // Users
+    for (var i = 0, len = users.length; i < len; i++) {
+        $("select[name$='cmbAssignedTo']")[0].options[i] = new Option(
+            users[i].name,
+            users[i].code
+        );
+    }
+
+    if (oTask !== null) {
+        $("select[name$='cmbProject']").find("option[value='" + oTask.project + "']").attr("selected", "selected");
+        $("select[name$='cmbPriority']").find("option[value='" + oTask.priority + "']").attr("selected", "selected");
+        $("select[name$='cmbType']").find("option[value='" + oTask.type + "']").attr("selected", "selected");
+        $("select[name$='cmbAssignedTo']").find("option[value='" + oTask.assignedTo + "']").attr("selected", "selected");
+    } else {
+        $("select[name$='cmbProject']").find("option:first").attr("selected", "selected");
+        $("select[name$='cmbPriority']").find("option:first").attr("selected", "selected");
+        $("select[name$='cmbType']").find("option:first").attr("selected", "selected");
+        $("select[name$='cmbAssignedTo']").find("option:first").attr("selected", "selected");
+    }
+}
+
+/**
+ * Update the input fields of the new task and edit task
+ * view with the object data passed by parameter
+ *
+ * @public
+ *
+ * @param {Object} oTask Task object used to fill the fields
+ */
+function setNewTaskDialogFields(oTask) {
+    "use strict";
+    var dialog = $("#dialog_newTask");
+
+    // Set combos
+    setNewTaskDialogCombos(oTask);
+
+    // Set inputs
+    if (oTask !== null) {
+        $(dialog).find('input[name$="txtCode"]').val(oTask.code);
+        $(dialog).find('input[name$="txtName"]').val(oTask.name);
+        $(dialog).find('textarea[name$="txtDescription"]').val(oTask.description);
+        $(dialog).find('input[name$="txtEstimation"]').val(oTask.estimation);
+        $(dialog).find('input[name$="txtIncurred"]').val(oTask.incurred);
+    } else {
+        $(dialog).find('input').val('');
+        $(dialog).find('textarea').val('');
+    }
 }
 
 /**
@@ -323,8 +458,8 @@ function setDroppables() {
  * @public
  */
 $(document).ready(function() {
-    "use strict";    
-	setDroppables();
-	setDraggables();
-	handleMenu();
+    "use strict";
+    setDroppables();
+    setDraggables();
+    handleMenu();
 });
