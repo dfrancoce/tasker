@@ -142,42 +142,6 @@ function test_init() {
 };
 
 /**
- * Open an "Edit Task" dialog. Reuses showNewTaskDialog function.
- *
- * @public
- *
- * @param {Object} dialog div that acts like a popup window
- * @param {Object} oTask Object to be updated
- * @param {Object} span DOM with the code-name title to be updated
- */
-function openEditTaskDialog(dialog, oTask, taskTitle) {
-    "use strict";
-    var dlg_editTask, task_code, task_name, task;
-
-    dlg_editTask = showNewTaskDialog(dialog);
-    setNewTaskDialogFields(oTask);
-
-    $(dlg_editTask).unbind("dialogclose");
-    $(dlg_editTask).bind("dialogclose", function(event, ui) {
-        $(dialog).removeClass("dialog");
-        $(dialog).addClass("dialog_hidden");
-    });
-
-    $(dlg_editTask).dialog("open");
-    $(dlg_editTask).dialog("option", "title", "<img class = 'icon' src = './img/task.png'/> Edit Task");
-    $(dlg_editTask).dialog("option", "buttons", {
-        "Save": function() {
-            updateTask(dialog, oTask);
-            $(taskTitle).text(oTask.code + "-" + oTask.name);
-            $(this).dialog("close");
-        },
-        "Cancel": function() {
-            $(this).dialog("close");
-        }
-    });
-}
-
-/**
  * Generates the element task draggable within
  * the div droppable
  * @public

@@ -234,17 +234,14 @@ function openNewProjectDialog(dialog) {
     $(dlg_newProject).dialog("open");
     $(dlg_newProject).dialog("option", "buttons", {
         "Save": function() {
-            var project = {
-                code: $("#txtCode").val(),
-                name: $("#txtProject").val()
+            var oProject = {
+                code: "",
+                name: ""
             };
 
-            taskerDB.indexedDB.addProject(project);
-            taskerDB.indexedDB.getProject($("#txtCode").val());
-            //taskerDB.indexedDB.getAllProjects();
-            //taskerDB.indexedDB.getProject(1);
-            //taskerDB.indexedDB.getProject(2);
-            //$(this).dialog("close");
+            updateProject(dialog, oProject);
+            addProject(oProject);
+            $(this).dialog("close");
         },
         "Cancel": function() {
             $(this).dialog("close");

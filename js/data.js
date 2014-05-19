@@ -37,7 +37,7 @@ function findTask(taskCode, taskName) {
 }
 
 /**
- * Add the task passed by parameter to the array
+ * Adds the task passed by parameter to the array
  * @public
  *
  * @param oTask. Object task.
@@ -48,7 +48,7 @@ function addTask(oTask) {
 }
 
 /**
- * Delete the task passed by parameter from the array
+ * Deletes the task passed by parameter from the array
  * @public
  *
  * @param index. Position of the task within the array.
@@ -59,7 +59,7 @@ function deleteTask(index) {
 }
 
 /**
- * Update the object properties with the data introduced by
+ * Updates the task object properties with the data introduced by
  * the user
  *
  * @public
@@ -96,4 +96,66 @@ function updateTaskState(taskName, taskState) {
     if (task !== null) {
         task.oTask.state = taskState;
     }
+}
+
+/**
+ * Finds an object in the projects array by code and name
+ * @public
+ *
+ * @param projectCode. Project code.
+ * @param projectName. Project name.
+ *
+ * @returns object ({ index: i, oProject: project[i] }) found or null
+ */
+function findProject(projectCode, projectName) {
+    "use strict";
+    for (var i = 0, len = projects.length; i < len; i++) {
+        if ((projects[i].code === projectCode) && (projects[i].name === projectName)) {
+            return {
+                index: i,
+                oProject: projects[i]
+            }; // Return as soon as the object is found
+        }
+    }
+
+    return null; // The object was not found
+}
+
+/**
+ * Updates the project object properties with the data introduced by
+ * the user
+ *
+ * @public
+ *
+ * @param {Object} dialog div that acts like a popup window
+ * @param {Object} oProject Project object used to fill the fields
+ */
+function updateProject(dialog, oProject) {
+    "use strict";
+    oProject.code = $(dialog).find('input[name$="txtCode"]').val();
+    oProject.name = $(dialog).find('input[name$="txtProject"]').val();
+    console.log("Project.Code: " + oProject.code);
+    console.log("Project.Name: " + oProject.name);
+}
+
+/**
+ * Adds the project passed by parameter to the array
+ * @public
+ *
+ * @param oProject. Object project.
+ */
+function addProject(oProject) {
+    "use strict";
+    projects.push(oProject);
+}
+
+/**
+ * Deletes the project passed by parameter from the array
+ * @public
+ *
+ * @param index. Position of the project within the array.
+ */
+function deleteProject(index) {
+    "use strict";
+    projects.splice(index, 1);
 }
