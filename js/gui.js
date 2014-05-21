@@ -7,7 +7,7 @@
  * @since 1.0
  */
 
- /**
+/**
  * Generates "New Board" dialog with the info
  * to be filled by the user
  * @public
@@ -624,7 +624,7 @@ function setNewUserDialogFields(oUser) {
  * stored in the array of boards
  *
  * @public
- * 
+ *
  */
 function refreshMyBoards() {
     "use strict";
@@ -642,14 +642,14 @@ function refreshMyBoards() {
 }
 
 /**
- * Refreshes the board which is in use at the moment 
+ * Refreshes the board which is in use at the moment
  *
  * @public
- * 
+ *
  */
 function refreshBoard() {
     "use strict";
-    var board, tasks_board = [];
+    var $el, clazz, board, tasks_board = [];
 
     board = $("select[name$='cmbMyBoards']").val();
     tasks_board = getTasksByBoard(board);
@@ -658,8 +658,20 @@ function refreshBoard() {
     $(".board").find("table").remove();
 
     for (var i = 0, len = tasks_board.length; i < len; i++) {
-        var $el = generateTaskElement(tasks_board[i].code + '-' + tasks_board[i].name, "toDo");
-        stickTask($el, "toDo");
+        switch (tasks_board[i].state) {
+            case "1":
+                clazz = "toDo";
+                break;
+            case "2":
+                clazz = "progress";
+                break;
+            case "3":
+                clazz = "finished";
+                break;
+        }
+
+        $el = generateTaskElement(tasks_board[i].code + '-' + tasks_board[i].name, clazz);
+        stickTask($el, clazz);
     }
 }
 
