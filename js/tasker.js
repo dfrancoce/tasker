@@ -88,11 +88,27 @@ function test_init() {
     users.push(u3);
     // </> Types
 
+    // Boards
+    var b1 = {
+        "code": "1",
+        "name": "Projects C++"
+    }
+
+    var b2 = {
+        "code": "2",
+        "name": "Projects Java"
+    }
+
+    boards.push(b1);
+    boards.push(b2);
+    // </> Boards
+
     // Tasks
     var t1 = {
         "code": "t1",
         "name": "Test 1",
         "description": "Description of the test 1",
+        "board": "1",
         "state": "1",
         "project": "1",
         "priority": "1",
@@ -106,6 +122,7 @@ function test_init() {
         "code": "t2",
         "name": "Test 2",
         "description": "Description of the test 2",
+        "board": "1",
         "state": "1",
         "project": "2",
         "priority": "2",
@@ -119,6 +136,7 @@ function test_init() {
         "code": "t3",
         "name": "Test 3",
         "description": "Description of the test 3",
+        "board": "2",
         "state": "1",
         "project": "3",
         "priority": "3",
@@ -133,12 +151,13 @@ function test_init() {
     tasks.push(t3);
     // </> Tasks	
 
-    $toDo = $(".board_toDo");
-
+    refreshMyBoards();
+    refreshBoard();
+    /*$toDo = $(".board_toDo");
     for (i = 0; i < tasks.length; i++) {
         var $el = generateTaskElement(tasks[i].code + '-' + tasks[i].name, "toDo");
         stickTask($el, "toDo");
-    }
+    }*/
 };
 
 /**
@@ -287,6 +306,6 @@ function stickTask(item, boardClassName) {
  * @public
  */
 $(document).ready(function() {
-    "use strict";
-    test_init();
+    "use strict";    
+    test_init();    
 });

@@ -74,6 +74,23 @@ div.board_toDo span.title, div.board_progress span.title, div.board_finished spa
     float: left;
 }
 
+div.myBoards {
+    margin-left: 10px;
+    margin-bottom: 10px;
+    width: 80%;
+    position: relative;
+    height: auto;    
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+div.myBoards label {
+    font-size: 10pt;
+    font-family: Georgia;
+    font-weight: lighter;    
+    color: #666666;
+}
+
 div.subTitle {
     float: left;
     width: 100%;

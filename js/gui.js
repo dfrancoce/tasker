@@ -7,6 +7,33 @@
  * @since 1.0
  */
 
+ /**
+ * Generates "New Board" dialog with the info
+ * to be filled by the user
+ * @public
+ *
+ * @param dialog DIV used as dialog
+ * @returns dialog DOM element
+ */
+function showNewBoardDialog(dialog) {
+    "use strict";
+    $(dialog).dialog({
+        width: "400",
+        height: "auto",
+        modal: true,
+        title: "<img class = 'icon' src = './img/task.png'/> New Board",
+        position: ["center", 150],
+        autoOpen: false,
+        resizable: false,
+        hide: {
+            effect: 'fold',
+            duration: 500
+        }
+    });
+
+    return $(dialog);
+}
+
 /**
  * Generates "New Task" dialog with the info
  * to be filled by the user
@@ -154,6 +181,7 @@ function openNewTaskDialog(dialog) {
                 "code": "",
                 "name": "",
                 "description": "",
+                "board": "",
                 "state": "1",
                 "project": "",
                 "priority": "",
@@ -214,6 +242,44 @@ function openEditTaskDialog(dialog, oTask, taskTitle) {
 }
 
 /**
+ * Opens a "New Board" dialog
+ * @public
+ *
+ * @param {Object} dialog div that acts like a popup window
+ */
+function openNewBoardDialog(dialog) {
+    "use strict";
+    var dlg_newBoard;
+
+    dlg_newBoard = showNewBoardDialog(dialog);
+    setNewBoardDialogFields(null);
+
+    $(dlg_newBoard).unbind("dialogclose");
+    $(dlg_newBoard).bind("dialogclose", function(event, ui) {
+        $(dialog).removeClass("dialog");
+        $(dialog).addClass("dialog_hidden");
+    });
+
+    $(dlg_newBoard).dialog("open");
+    $(dlg_newBoard).dialog("option", "buttons", {
+        "Save": function() {
+            var oBoard = {
+                code: "",
+                name: ""
+            };
+
+            updateBoard(dialog, oBoard);
+            addBoard(oBoard);
+            refreshMyBoards();
+            $(this).dialog("close");
+        },
+        "Cancel": function() {
+            $(this).dialog("close");
+        }
+    });
+}
+
+/**
  * Opens a "New Project" dialog
  * @public
  *
@@ -224,6 +290,7 @@ function openNewProjectDialog(dialog) {
     var dlg_newProject;
 
     dlg_newProject = showNewProjectDialog(dialog);
+    setNewProjectDialogFields(null);
 
     $(dlg_newProject).unbind("dialogclose");
     $(dlg_newProject).bind("dialogclose", function(event, ui) {
@@ -260,6 +327,7 @@ function openNewUserDialog(dialog) {
     var dlg_newUser;
 
     dlg_newUser = showNewUserDialog(dialog);
+    setNewUserDialogFields(null);
 
     $(dlg_newUser).unbind("dialogclose");
     $(dlg_newUser).bind("dialogclose", function(event, ui) {
@@ -270,6 +338,13 @@ function openNewUserDialog(dialog) {
     $(dlg_newUser).dialog("open");
     $(dlg_newUser).dialog("option", "buttons", {
         "Save": function() {
+            var oUser = {
+                code: "",
+                name: ""
+            };
+
+            updateUser(dialog, oUser);
+            addUser(oUser);
             $(this).dialog("close");
         },
         "Cancel": function() {
@@ -279,11 +354,32 @@ function openNewUserDialog(dialog) {
 }
 
 /**
+ * Handles the mouse events
+ * @public
+ */
+function handleMouseEvents() {
+    "use strict";
+
+    $("#cmbMyBoards").change(function() {
+        refreshBoard();
+    });
+}
+
+/**
  * Handles the menu clicks
  * @public
  */
 function handleMenu() {
     "use strict";
+
+    $("a.newBoard").click(function() {
+        var dialog;
+
+        dialog = $("#dialog_newBoard");
+        $(dialog).addClass("dialog");
+        $(dialog).removeClass("dialog_hidden");
+        openNewBoardDialog($(dialog));
+    });
 
     $("a.newTask").click(function() {
         var dialog;
@@ -377,13 +473,21 @@ function setDroppables() {
  */
 function setNewTaskDialogCombos(oTask) {
     "use strict";
+    // Boards 
+    for (var i = 0, len = boards.length; i < len; i++) {
+        $("select[name$='cmbBoard']")[0].options[i] = new Option(
+            boards[i].name,
+            boards[i].code
+        );
+    };
+
     // Projects 
     for (var i = 0, len = projects.length; i < len; i++) {
         $("select[name$='cmbProject']")[0].options[i] = new Option(
             projects[i].name,
             projects[i].code
         );
-    }
+    };
 
     // Priorities
     for (var i = 0, len = priorities.length; i < len; i++) {
@@ -391,7 +495,7 @@ function setNewTaskDialogCombos(oTask) {
             priorities[i].name,
             priorities[i].code
         );
-    }
+    };
 
     // Types
     for (var i = 0, len = types.length; i < len; i++) {
@@ -399,7 +503,7 @@ function setNewTaskDialogCombos(oTask) {
             types[i].name,
             types[i].code
         );
-    }
+    };
 
     // Users
     for (var i = 0, len = users.length; i < len; i++) {
@@ -407,14 +511,16 @@ function setNewTaskDialogCombos(oTask) {
             users[i].name,
             users[i].code
         );
-    }
+    };
 
     if (oTask !== null) {
+        $("select[name$='cmbBoard']").find("option[value='" + oTask.board + "']").attr("selected", "selected");
         $("select[name$='cmbProject']").find("option[value='" + oTask.project + "']").attr("selected", "selected");
         $("select[name$='cmbPriority']").find("option[value='" + oTask.priority + "']").attr("selected", "selected");
         $("select[name$='cmbType']").find("option[value='" + oTask.type + "']").attr("selected", "selected");
         $("select[name$='cmbAssignedTo']").find("option[value='" + oTask.assignedTo + "']").attr("selected", "selected");
     } else {
+        $("select[name$='cmbBoard']").find("option:first").attr("selected", "selected");
         $("select[name$='cmbProject']").find("option:first").attr("selected", "selected");
         $("select[name$='cmbPriority']").find("option:first").attr("selected", "selected");
         $("select[name$='cmbType']").find("option:first").attr("selected", "selected");
@@ -423,7 +529,7 @@ function setNewTaskDialogCombos(oTask) {
 }
 
 /**
- * Update the input fields of the new task and edit task
+ * Updates the input fields of the new task and edit task
  * view with the object data passed by parameter
  *
  * @public
@@ -451,6 +557,113 @@ function setNewTaskDialogFields(oTask) {
 }
 
 /**
+ * Updates the input fields of the new board and edit board
+ * view with the object data passed by parameter
+ *
+ * @public
+ *
+ * @param {Object} oBoard Board object used to fill the fields
+ */
+function setNewBoardDialogFields(oBoard) {
+    "use strict";
+    var dialog = $("#dialog_newBoard");
+
+    // Set inputs
+    if (oBoard !== null) {
+        $(dialog).find('input[name$="txtCode"]').val(oBoard.code);
+        $(dialog).find('input[name$="txtBoard"]').val(oBoard.name);
+    } else {
+        $(dialog).find('input').val('');
+    }
+}
+
+/**
+ * Updates the input fields of the new project and edit project
+ * view with the object data passed by parameter
+ *
+ * @public
+ *
+ * @param {Object} oProject Project object used to fill the fields
+ */
+function setNewProjectDialogFields(oProject) {
+    "use strict";
+    var dialog = $("#dialog_newProject");
+
+    // Set inputs
+    if (oProject !== null) {
+        $(dialog).find('input[name$="txtCode"]').val(oProject.code);
+        $(dialog).find('input[name$="txtProject"]').val(oProject.name);
+    } else {
+        $(dialog).find('input').val('');
+    }
+}
+
+/**
+ * Updates the input fields of the new user and edit user
+ * view with the object data passed by parameter
+ *
+ * @public
+ *
+ * @param {Object} oUser User object used to fill the fields
+ */
+function setNewUserDialogFields(oUser) {
+    "use strict";
+    var dialog = $("#dialog_newUser");
+
+    // Set inputs
+    if (oUser !== null) {
+        $(dialog).find('input[name$="txtCode"]').val(oUser.code);
+        $(dialog).find('input[name$="txtUserName"]').val(oUser.name);
+    } else {
+        $(dialog).find('input').val('');
+    }
+}
+
+/**
+ * Refreshes the combo cmbMyBoards with the information
+ * stored in the array of boards
+ *
+ * @public
+ * 
+ */
+function refreshMyBoards() {
+    "use strict";
+
+    // Remove all the options
+    $("select[name$='cmbMyBoards']").empty();
+
+    // Reload from the array
+    for (var i = 0, len = boards.length; i < len; i++) {
+        $("select[name$='cmbMyBoards']")[0].options[i] = new Option(
+            boards[i].name,
+            boards[i].code
+        );
+    }
+}
+
+/**
+ * Refreshes the board which is in use at the moment 
+ *
+ * @public
+ * 
+ */
+function refreshBoard() {
+    "use strict";
+    var board, tasks_board = [];
+
+    board = $("select[name$='cmbMyBoards']").val();
+    tasks_board = getTasksByBoard(board);
+
+    // Clears the board
+    $(".board").find("table").remove();
+
+    for (var i = 0, len = tasks_board.length; i < len; i++) {
+        var $el = generateTaskElement(tasks_board[i].code + '-' + tasks_board[i].name, "toDo");
+        stickTask($el, "toDo");
+    }
+}
+
+/**
  * After loading...
  * @public
  */
@@ -459,4 +672,5 @@ $(document).ready(function() {
     setDroppables();
     setDraggables();
     handleMenu();
+    handleMouseEvents();
 });

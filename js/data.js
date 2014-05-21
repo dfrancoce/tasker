@@ -7,7 +7,8 @@
  * @since 1.0
  */
 
-var tasks = [],
+var boards = [],
+    tasks = [],
     projects = [],
     priorities = [],
     types = [],
@@ -44,7 +45,11 @@ function findTask(taskCode, taskName) {
  */
 function addTask(oTask) {
     "use strict";
-    tasks.push(oTask);
+    if (findTask(oTask.code, oTask.name) === null) {
+        tasks.push(oTask);
+    } else {
+        console.log("Task with code " + oTask.code + " and name " + oTask.name + " already exists");
+    }
 }
 
 /**
@@ -72,8 +77,13 @@ function updateTask(dialog, oTask) {
     oTask.code = $(dialog).find('input[name$="txtCode"]').val();
     oTask.name = $(dialog).find('input[name$="txtName"]').val();
     oTask.description = $(dialog).find('textarea[name$="txtDescription"]').val();
+    oTask.board = $(dialog).find('select[name$="cmbBoard"]').val();
     oTask.estimation = $(dialog).find('input[name$="txtEstimation"]').val();
     oTask.incurred = $(dialog).find('input[name$="txtIncurred"]').val();
+    oTask.project = $(dialog).find('select[name$="cmbProject"]').val();
+    oTask.priority = $(dialog).find('select[name$="cmbPriority"]').val();
+    oTask.type = $(dialog).find('select[name$="cmbType"]').val();
+    oTask.assignedTo = $(dialog).find('select[name$="cmbAssignedTo"]').val();
 }
 
 /**
@@ -99,13 +109,108 @@ function updateTaskState(taskName, taskState) {
 }
 
 /**
+ * Gets all the tasks objects filtered by board
+ * @public
+ *
+ * @param board. board code.
+ *
+ * @returns tasks[]. Array of tasks 
+ */
+function getTasksByBoard(board) {
+    "use strict";
+    var tasks_board = [];
+
+    for (var i = 0, len = tasks.length; i < len; i++) {
+        if (tasks[i].board === board) {
+            tasks_board.push(tasks[i]);
+        }
+    }
+
+    return tasks_board; // The subarray of tasks
+}
+
+/**
+ * Finds an object in the boards array by code and name
+ * @public
+ *
+ * @param boardCode. Board code.
+ * @param boardName. Board name.
+ *
+ * @returns object ({ index: i, oBoard: boards[i] }) found or null
+ */
+function findBoard(boardCode, boardName) {
+    "use strict";
+    for (var i = 0, len = boards.length; i < len; i++) {
+        if ((boards[i].code === boardCode) && (boards[i].name === boardName)) {
+            return {
+                index: i,
+                oBoard: boards[i]
+            }; // Return as soon as the object is found
+        }
+    }
+
+    return null; // The object was not found
+}
+
+/**
+ * Updates the board object properties with the data introduced by
+ * the user
+ *
+ * @public
+ *
+ * @param {Object} dialog div that acts like a popup window
+ * @param {Object} oProject Board object used to fill the fields
+ */
+function updateBoard(dialog, oBoard) {
+    "use strict";
+    oBoard.code = $(dialog).find('input[name$="txtCode"]').val();
+    oBoard.name = $(dialog).find('input[name$="txtBoard"]').val();
+    console.log("Board.Code: " + oBoard.code);
+    console.log("Board.Name: " + oBoard.name);
+}
+
+/**
+ * Adds the board passed by parameter to the array
+ * @public
+ *
+ * @param oBoard. Object board.
+ */
+function addBoard(oBoard) {
+    "use strict";
+    if (findBoard(oBoard.code, oBoard.name) === null) {
+        boards.push(oBoard);
+    } else {
+        console.log("Board with code " + oBoard.code + " and name " + oBoard.name + " already exists");
+    }
+}
+
+/**
+ * Deletes the board passed by parameter from the array
+ * @public
+ *
+ * @param oBoard. Object board.
+ */
+function deleteBoard(oBoard) {
+    "use strict";
+    var my_board;
+
+    my_board = findBoard(oBoard.code, oBoard.name);
+
+    if (my_board !== null) {
+        boards.splice(my_board.index, 1);
+    } else {
+        console.log("Board with code " + oBoard.code + " and name " + oBoard.name + " doesn't exist");
+    }
+}
+
+/**
  * Finds an object in the projects array by code and name
  * @public
  *
  * @param projectCode. Project code.
  * @param projectName. Project name.
  *
- * @returns object ({ index: i, oProject: project[i] }) found or null
+ * @returns object ({ index: i, oProject: projects[i] }) found or null
  */
 function findProject(projectCode, projectName) {
     "use strict";
@@ -146,16 +251,104 @@ function updateProject(dialog, oProject) {
  */
 function addProject(oProject) {
     "use strict";
-    projects.push(oProject);
+    if (findProject(oProject.code, oProject.name) === null) {
+        projects.push(oProject);
+        console.log(projects);
+    } else {
+        console.log("Project with code " + oProject.code + " and name " + oProject.name + " already exists");
+    }
 }
 
 /**
  * Deletes the project passed by parameter from the array
  * @public
  *
- * @param index. Position of the project within the array.
+ * @param oProject. Object project
  */
-function deleteProject(index) {
+function deleteProject(oProject) {
     "use strict";
-    projects.splice(index, 1);
+    var my_project;
+
+    my_project = findProject(oProject.code, oProject.name);
+
+    if (my_project !== null) {
+        projects.splice(my_project.index, 1);
+    } else {
+        console.log("Project with code " + oProject.code + " and name " + oProject.name + " doesn't exist");
+    }
+}
+
+/**
+ * Finds an object in the users array by code and name
+ * @public
+ *
+ * @param userCode. User code.
+ * @param userName. User name.
+ *
+ * @returns object ({ index: i, oUser: users[i] }) found or null
+ */
+function findUser(userCode, userName) {
+    "use strict";
+    for (var i = 0, len = users.length; i < len; i++) {
+        if ((users[i].code === userCode) && (users[i].name === userName)) {
+            return {
+                index: i,
+                oUser: users[i]
+            }; // Return as soon as the object is found
+        }
+    }
+
+    return null; // The object was not found
+}
+
+/**
+ * Updates the user object properties with the data introduced by
+ * the user
+ *
+ * @public
+ *
+ * @param {Object} dialog div that acts like a popup window
+ * @param {Object} oUser User object used to fill the fields
+ */
+function updateUser(dialog, oUser) {
+    "use strict";
+    oUser.code = $(dialog).find('input[name$="txtCode"]').val();
+    oUser.name = $(dialog).find('input[name$="txtUserName"]').val();
+    console.log("User.Code: " + oUser.code);
+    console.log("User.Name: " + oUser.name);
+}
+
+/**
+ * Adds the user passed by parameter to the array
+ * @public
+ *
+ * @param oUser. Object user.
+ */
+function addUser(oUser) {
+    "use strict";
+     if (findUser(oUser.code, oUser.name) === null) {
+        users.push(oUser);
+        console.log(users);
+    } else {
+        console.log("User with code " + oUser.code + " and name " + oUser.name + " already exists");
+    }
+}
+
+/**
+ * Deletes the user passed by parameter from the array
+ * @public
+ *
+ * @param oUser. Object user
+ */
+function deleteUser(oUser) {
+    "use strict";
+    var my_user;
+
+    my_user = findUser(oUser.code, oUser.name);
+
+    if (my_user !== null) {
+        users.splice(my_user.index, 1);
+    } else {
+        console.log("User with code " + oUser.code + " and name " + oUser.name + " doesn't exist");
+    }
 }
