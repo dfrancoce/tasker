@@ -193,9 +193,7 @@ function openNewTaskDialog(dialog) {
 
             updateTask(dialog, oTask);
             addTask(oTask);
-
-            $el = generateTaskElement(oTask.code + '-' + oTask.name, "toDo");
-            stickTask($el, "toDo");
+            refreshBoard();
 
             $(this).dialog("close");
         },
@@ -359,7 +357,6 @@ function openNewUserDialog(dialog) {
  */
 function handleMouseEvents() {
     "use strict";
-
     $("#cmbMyBoards").change(function() {
         refreshBoard();
     });
@@ -371,7 +368,6 @@ function handleMouseEvents() {
  */
 function handleMenu() {
     "use strict";
-
     $("a.newBoard").click(function() {
         var dialog;
 
@@ -681,6 +677,10 @@ function refreshBoard() {
  */
 $(document).ready(function() {
     "use strict";
+    // Open database connection
+    openConnection();
+
+    // Initialize GUI stuff
     setDroppables();
     setDraggables();
     handleMenu();

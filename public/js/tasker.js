@@ -1,3 +1,12 @@
+/*jslint browser: true*/ /*global  $*/
+
+/**
+ * @fileOverview Manages tasks
+ * @author <a href="mailto:danielfrancocecilia@gmail.com">Daniel Franco</a>
+ * @version 1.0
+ * @since 1.0
+ */
+
 /**
  * Generates some tasks to run some testing
  *

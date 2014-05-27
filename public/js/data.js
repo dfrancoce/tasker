@@ -7,12 +7,23 @@
  * @since 1.0
  */
 
-var boards = [],
+var socket,
+    boards = [],
     tasks = [],
     projects = [],
     priorities = [],
     types = [],
     users = [];
+
+/**
+ * Opens the connection against the database
+ * @public
+ *
+ */
+function openConnection() {
+    socket = io.connect('http://localhost:8080');
+    socket.emit('db_openConnection');
+}
 
 /**
  * Finds an object in the tasks array by code and name
@@ -114,7 +125,7 @@ function updateTaskState(taskName, taskState) {
  *
  * @param board. board code.
  *
- * @returns tasks[]. Array of tasks 
+ * @returns tasks[]. Array of tasks
  */
 function getTasksByBoard(board) {
     "use strict";
@@ -253,6 +264,7 @@ function addProject(oProject) {
     "use strict";
     if (findProject(oProject.code, oProject.name) === null) {
         projects.push(oProject);
+        socket.emit('db_insertProject', oProject); // insert into the database
         console.log(projects);
     } else {
         console.log("Project with code " + oProject.code + " and name " + oProject.name + " already exists");
@@ -273,6 +285,7 @@ function deleteProject(oProject) {
 
     if (my_project !== null) {
         projects.splice(my_project.index, 1);
+        socket.emit('db_insertProject', oProject); // delete from the database
     } else {
         console.log("Project with code " + oProject.code + " and name " + oProject.name + " doesn't exist");
     }
@@ -326,8 +339,9 @@ function updateUser(dialog, oUser) {
  */
 function addUser(oUser) {
     "use strict";
-     if (findUser(oUser.code, oUser.name) === null) {
+    if (findUser(oUser.code, oUser.name) === null) {
         users.push(oUser);
+        socket.emit('db_insertUser', oUser); // insert user into the database
         console.log(users);
     } else {
         console.log("User with code " + oUser.code + " and name " + oUser.name + " already exists");
@@ -348,6 +362,7 @@ function deleteUser(oUser) {
 
     if (my_user !== null) {
         users.splice(my_user.index, 1);
+        socket.emit('db_deleteUser', oUser); // delete user from the database
     } else {
         console.log("User with code " + oUser.code + " and name " + oUser.name + " doesn't exist");
     }
