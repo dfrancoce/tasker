@@ -19,10 +19,61 @@ io.sockets.on('connection', function(socket) {
         db.openConnection();
     });
 
+    // GETTERS
+    socket.on('db_getBoards', function(data) {
+        db.getBoards(function(result) {
+            socket.emit('getBoards', result);
+        });
+    });
+
+    socket.on('db_getPriorities', function(data) {
+        db.getPriorities(function(result) {
+            socket.emit('getPriorities', result);
+        });
+    });
+
+    socket.on('db_getTypes', function(data) {
+        db.getTypes(function(result) {
+            socket.emit('getTypes', result);
+        });
+    });
+
+    socket.on('db_getUsers', function(data) {
+        db.getUsers(function(result) {
+            socket.emit('getUsers', result);
+        });
+    });
+
+    socket.on('db_getProjects', function(data) {
+        db.getProjects(function(result) {
+            socket.emit('getProjects', result);
+        });
+    });
+
+    socket.on('db_getTasks', function(data) {
+        db.getTasks(function(result) {
+            socket.emit('getTasks', result);
+        });
+    });
+    // END GETTERS
+
+    // BOARDS
+    socket.on('db_insertBoard', function(data) {
+        db.insertBoard(data, function(result) {
+            socket.emit('getBoards', result);
+        });
+    });
+
+    socket.on('db_deleteBoard', function(data) {
+        db.deleteBoard(data);
+    });
+    // END BOARDS
+
     // Projects
     socket.on('db_insertProject', function(data) {
-        console.log("insertProject");
-        db.insertProject(data);
+        db.insertProject(data, function(result) {
+            socket.emit('getProjects', result);
+        });
     });
 
     socket.on('db_deleteProject', function(data) {
@@ -31,7 +82,9 @@ io.sockets.on('connection', function(socket) {
 
     //Users
     socket.on('db_insertUser', function(data) {
-        db.insertUser(data);
+        db.insertUser(data, function(result) {
+            socket.emit('getUsers', result);
+        });
     });
 
     socket.on('db_deleteUser', function(data) {

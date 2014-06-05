@@ -244,13 +244,13 @@ function stickTask(item, boardClassName) {
     // Updating task state in the array of tasks
     switch (boardClassName) {
         case 'toDo':
-            updateTaskState(task_name, "1");
+            updateTaskState(task_name, 1);
             break;
         case 'progress':
-            updateTaskState(task_name, "2");
+            updateTaskState(task_name, 2);
             break;
         case 'finished':
-            updateTaskState(task_name, "3");
+            updateTaskState(task_name, 3);
             break;
     }
     // </>
@@ -316,5 +316,5 @@ function stickTask(item, boardClassName) {
  */
 $(document).ready(function() {
     "use strict";
-    test_init();
+    //test_init();
 });

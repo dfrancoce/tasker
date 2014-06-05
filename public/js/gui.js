@@ -181,14 +181,14 @@ function openNewTaskDialog(dialog) {
                 "code": "",
                 "name": "",
                 "description": "",
-                "board": "",
-                "state": "1",
-                "project": "",
-                "priority": "",
-                "type": "",
-                "estimation": "",
-                "incurred": "",
-                "assignedTo": ""
+                "board": 0,
+                "state": 1,
+                "project": 0,
+                "priority": 0,
+                "type": 0,
+                "estimation": 0,
+                "incurred": 0,
+                "assignedTo": 0
             };
 
             updateTask(dialog, oTask);
@@ -473,7 +473,7 @@ function setNewTaskDialogCombos(oTask) {
     for (var i = 0, len = boards.length; i < len; i++) {
         $("select[name$='cmbBoard']")[0].options[i] = new Option(
             boards[i].name,
-            boards[i].code
+            boards[i].id
         );
     };
 
@@ -481,7 +481,7 @@ function setNewTaskDialogCombos(oTask) {
     for (var i = 0, len = projects.length; i < len; i++) {
         $("select[name$='cmbProject']")[0].options[i] = new Option(
             projects[i].name,
-            projects[i].code
+            projects[i].id
         );
     };
 
@@ -489,7 +489,7 @@ function setNewTaskDialogCombos(oTask) {
     for (var i = 0, len = priorities.length; i < len; i++) {
         $("select[name$='cmbPriority']")[0].options[i] = new Option(
             priorities[i].name,
-            priorities[i].code
+            priorities[i].id
         );
     };
 
@@ -497,7 +497,7 @@ function setNewTaskDialogCombos(oTask) {
     for (var i = 0, len = types.length; i < len; i++) {
         $("select[name$='cmbType']")[0].options[i] = new Option(
             types[i].name,
-            types[i].code
+            types[i].id
         );
     };
 
@@ -505,7 +505,7 @@ function setNewTaskDialogCombos(oTask) {
     for (var i = 0, len = users.length; i < len; i++) {
         $("select[name$='cmbAssignedTo']")[0].options[i] = new Option(
             users[i].name,
-            users[i].code
+            users[i].id
         );
     };
 
@@ -632,7 +632,7 @@ function refreshMyBoards() {
     for (var i = 0, len = boards.length; i < len; i++) {
         $("select[name$='cmbMyBoards']")[0].options[i] = new Option(
             boards[i].name,
-            boards[i].code
+            boards[i].id
         );
     }
 }
@@ -654,14 +654,14 @@ function refreshBoard() {
     $(".board").find("table").remove();
 
     for (var i = 0, len = tasks_board.length; i < len; i++) {
-        switch (tasks_board[i].state) {
-            case "1":
+        switch (parseInt(tasks_board[i].state)) {
+            case 1:
                 clazz = "toDo";
                 break;
-            case "2":
+            case 2:
                 clazz = "progress";
                 break;
-            case "3":
+            case 3:
                 clazz = "finished";
                 break;
         }
@@ -677,8 +677,8 @@ function refreshBoard() {
  */
 $(document).ready(function() {
     "use strict";
-    // Open database connection
-    openConnection();
+    // Initializes data
+    initData();
 
     // Initialize GUI stuff
     setDroppables();

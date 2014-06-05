@@ -16,6 +16,74 @@ var socket,
     users = [];
 
 /**
+ * Initializes the data variables from the
+ * database information
+ * @public
+ *
+ */
+function initData() {
+    openConnection();
+
+    // Init boards
+    socket.emit('db_getBoards');
+    socket.on('getBoards', function(data) {
+        for (var i = 0, len = data.rows.length; i < len; i++) {
+            boards.push(data.rows[i]);
+        }
+
+        // Each time we get boards from the database we must
+        // refresh the boards combo and the board itself.
+        refreshMyBoards();
+        refreshBoard();
+    });
+
+    // Init priorities
+    socket.emit('db_getPriorities');
+    socket.on('getPriorities', function(data) {
+        for (var i = 0, len = data.rows.length; i < len; i++) {
+            priorities.push(data.rows[i]);
+        }
+    });
+
+    // Init types
+    socket.emit('db_getTypes');
+    socket.on('getTypes', function(data) {
+        for (var i = 0, len = data.rows.length; i < len; i++) {
+            types.push(data.rows[i]);
+        }
+    });
+
+    // Init projects
+    socket.emit('db_getProjects');
+    socket.on('getProjects', function(data) {
+        for (var i = 0, len = data.rows.length; i < len; i++) {
+            projects.push(data.rows[i]);
+        }
+    });
+
+    // Init users
+    socket.emit('db_getUsers');
+    socket.on('getUsers', function(data) {
+        for (var i = 0, len = data.rows.length; i < len; i++) {
+            users.push(data.rows[i]);
+        }
+    });
+
+    // Init tasks
+    socket.emit('db_getTasks');
+    socket.on('getTasks', function(data) {
+        for (var i = 0, len = data.rows.length; i < len; i++) {
+            tasks.push(data.rows[i]);
+        }
+
+        // If we get tasks from the database we must refresh
+        // boards combo and the current board.
+        refreshMyBoards();
+        refreshBoard();
+    });
+}
+
+/**
  * Opens the connection against the database
  * @public
  *
@@ -88,13 +156,13 @@ function updateTask(dialog, oTask) {
     oTask.code = $(dialog).find('input[name$="txtCode"]').val();
     oTask.name = $(dialog).find('input[name$="txtName"]').val();
     oTask.description = $(dialog).find('textarea[name$="txtDescription"]').val();
-    oTask.board = $(dialog).find('select[name$="cmbBoard"]').val();
-    oTask.estimation = $(dialog).find('input[name$="txtEstimation"]').val();
-    oTask.incurred = $(dialog).find('input[name$="txtIncurred"]').val();
-    oTask.project = $(dialog).find('select[name$="cmbProject"]').val();
-    oTask.priority = $(dialog).find('select[name$="cmbPriority"]').val();
-    oTask.type = $(dialog).find('select[name$="cmbType"]').val();
-    oTask.assignedTo = $(dialog).find('select[name$="cmbAssignedTo"]').val();
+    oTask.board = parseInt($(dialog).find('select[name$="cmbBoard"]').val());
+    oTask.estimation = parseInt($(dialog).find('input[name$="txtEstimation"]').val());
+    oTask.incurred = parseInt($(dialog).find('input[name$="txtIncurred"]').val());
+    oTask.project = parseInt($(dialog).find('select[name$="cmbProject"]').val());
+    oTask.priority = parseInt($(dialog).find('select[name$="cmbPriority"]').val());
+    oTask.type = parseInt($(dialog).find('select[name$="cmbType"]').val());
+    oTask.assignedTo = parseInt($(dialog).find('select[name$="cmbAssignedTo"]').val());
 }
 
 /**
@@ -115,7 +183,7 @@ function updateTaskState(taskName, taskState) {
 
     // We found it in the array
     if (task !== null) {
-        task.oTask.state = taskState;
+        task.oTask.state = parseInt(taskState);
     }
 }
 
@@ -123,7 +191,7 @@ function updateTaskState(taskName, taskState) {
  * Gets all the tasks objects filtered by board
  * @public
  *
- * @param board. board code.
+ * @param board. board id.
  *
  * @returns tasks[]. Array of tasks
  */
@@ -132,7 +200,7 @@ function getTasksByBoard(board) {
     var tasks_board = [];
 
     for (var i = 0, len = tasks.length; i < len; i++) {
-        if (tasks[i].board === board) {
+        if (tasks[i].board === parseInt(board)) {
             tasks_board.push(tasks[i]);
         }
     }
@@ -176,8 +244,6 @@ function updateBoard(dialog, oBoard) {
     "use strict";
     oBoard.code = $(dialog).find('input[name$="txtCode"]').val();
     oBoard.name = $(dialog).find('input[name$="txtBoard"]').val();
-    console.log("Board.Code: " + oBoard.code);
-    console.log("Board.Name: " + oBoard.name);
 }
 
 /**
@@ -189,7 +255,7 @@ function updateBoard(dialog, oBoard) {
 function addBoard(oBoard) {
     "use strict";
     if (findBoard(oBoard.code, oBoard.name) === null) {
-        boards.push(oBoard);
+        socket.emit('db_insertBoard', oBoard); // insert board into the database
     } else {
         console.log("Board with code " + oBoard.code + " and name " + oBoard.name + " already exists");
     }
@@ -250,8 +316,6 @@ function updateProject(dialog, oProject) {
     "use strict";
     oProject.code = $(dialog).find('input[name$="txtCode"]').val();
     oProject.name = $(dialog).find('input[name$="txtProject"]').val();
-    console.log("Project.Code: " + oProject.code);
-    console.log("Project.Name: " + oProject.name);
 }
 
 /**
@@ -265,7 +329,6 @@ function addProject(oProject) {
     if (findProject(oProject.code, oProject.name) === null) {
         projects.push(oProject);
         socket.emit('db_insertProject', oProject); // insert into the database
-        console.log(projects);
     } else {
         console.log("Project with code " + oProject.code + " and name " + oProject.name + " already exists");
     }
@@ -327,8 +390,6 @@ function updateUser(dialog, oUser) {
     "use strict";
     oUser.code = $(dialog).find('input[name$="txtCode"]').val();
     oUser.name = $(dialog).find('input[name$="txtUserName"]').val();
-    console.log("User.Code: " + oUser.code);
-    console.log("User.Name: " + oUser.name);
 }
 
 /**
@@ -342,7 +403,6 @@ function addUser(oUser) {
     if (findUser(oUser.code, oUser.name) === null) {
         users.push(oUser);
         socket.emit('db_insertUser', oUser); // insert user into the database
-        console.log(users);
     } else {
         console.log("User with code " + oUser.code + " and name " + oUser.name + " already exists");
     }
