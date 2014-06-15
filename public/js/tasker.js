@@ -264,7 +264,7 @@ function stickTask(item, boardClassName) {
         task_title = $(this).siblings('span');
         task_code = $(task_title).text().split('-')[0];
         task_name = $(task_title).text().split('-')[1];
-        task = findTask(task_code, task_name);
+        task = findTaskByCodeName(task_code, task_name);
 
         if (task !== null) {
             dialog = $("#dialog_newTask");

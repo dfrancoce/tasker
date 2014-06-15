@@ -45,7 +45,7 @@ function showNewBoardDialog(dialog) {
 function showNewTaskDialog(dialog) {
     "use strict";
     $(dialog).dialog({
-        width: "400",
+        width: "425",
         height: "auto",
         modal: true,
         title: "<img class = 'icon' src = './img/task.png'/> New Task",
@@ -154,6 +154,86 @@ function showDeleteDialog() {
     return $(dialog);
 }
 
+function addEditDeleteToTaskDialog(dlg_newTask) {
+    // Adds "delete" functionality
+    $(dlg_newTask).find('img.iconDel').unbind('click');
+    $(dlg_newTask).find('img.iconDel').click(function() {
+        var dialog, img, id_to_remove, name_to_remove, entity_name, select;
+
+        img = $(this);
+        dialog = showDeleteDialog();
+
+        $(dialog).dialog("open");
+        $(dialog).dialog("option", "buttons", {
+            "Yes": function() {
+                select = $(img).siblings('select');
+                entity_name = $(select).attr('id').replace('cmb', '');
+                id_to_remove = $(select).find('option:selected').val();
+                name_to_remove = $(select).find('option:selected').text();
+
+                switch (entity_name) {
+                    case 'Board':
+                        var oBoard = findBoard(id_to_remove, name_to_remove);
+                        deleteBoard(oBoard);
+                        break;
+                    case 'Project':
+                        var oProject = findProject(id_to_remove, name_to_remove);
+                        deleteProject(oProject);
+                        break;
+                    case 'AssignedTo':
+                        var oUser = findUser(id_to_remove, name_to_remove);
+                        deleteUser(oUser);
+                        break;
+                }
+
+                $(this).dialog("close");
+            },
+            "No": function() {
+                $(this).dialog("close");
+            }
+        });
+    });
+
+    // Adds "edit" functionality
+    $(dlg_newTask).find('img.iconEdit').unbind('click');
+    $(dlg_newTask).find('img.iconEdit').click(function() {
+        var dialog, img, id_to_edit, name_to_edit, entity_name, select;
+
+        img = $(this);
+        select = $(img).siblings('select');
+        entity_name = $(select).attr('id').replace('cmb', '');
+        id_to_edit = $(select).find('option:selected').val();
+        name_to_edit = $(select).find('option:selected').text();
+
+        switch (entity_name) {
+            case 'Board':
+                var oBoard = findBoard(id_to_edit, name_to_edit);
+
+                dialog = $("#dialog_newBoard");
+                $(dialog).removeClass("dialog_hidden");
+                $(dialog).addClass("dialog");
+                openEditBoardDialog(dialog, oBoard.oBoard);
+                break;
+            case 'Project':
+                var oProject = findProject(id_to_edit, name_to_edit);
+
+                dialog = $("#dialog_newProject");
+                $(dialog).removeClass("dialog_hidden");
+                $(dialog).addClass("dialog");
+                openEditProjectDialog(dialog, oProject.oProject);
+                break;
+            case 'AssignedTo':
+                var oUser = findUser(id_to_edit, name_to_edit);
+
+                dialog = $("#dialog_newUser");
+                $(dialog).removeClass("dialog_hidden");
+                $(dialog).addClass("dialog");
+                openEditUserDialog(dialog, oUser.oUser);
+                break;
+        }
+    });
+}
+
 /**
  * Opens a "New Task" dialog
  * @public
@@ -172,6 +252,9 @@ function openNewTaskDialog(dialog) {
         $(dialog).removeClass("dialog");
         $(dialog).addClass("dialog_hidden");
     });
+
+    // Adds functionality to the "edit" and "delete" buttons
+    addEditDeleteToTaskDialog(dlg_newTask);
 
     $(dlg_newTask).dialog("open");
     $(dlg_newTask).dialog("option", "buttons", {
@@ -225,12 +308,16 @@ function openEditTaskDialog(dialog, oTask, taskTitle) {
         $(dialog).addClass("dialog_hidden");
     });
 
+    // Adds functionality to the "edit" and "delete" buttons
+    addEditDeleteToTaskDialog(dlg_editTask);
+
     $(dlg_editTask).dialog("open");
     $(dlg_editTask).dialog("option", "title", "<img class = 'icon' src = './img/task.png'/> Edit Task");
     $(dlg_editTask).dialog("option", "buttons", {
         "Save": function() {
             updateTask(dialog, oTask);
             $(taskTitle).text(oTask.code + "-" + oTask.name);
+            refreshBoard();
             $(this).dialog("close");
         },
         "Cancel": function() {
@@ -278,6 +365,42 @@ function openNewBoardDialog(dialog) {
 }
 
 /**
+ * Open an "Edit Board" dialog. Reuses showNewBoardDialog function.
+ *
+ * @public
+ *
+ * @param {Object} dialog div that acts like a popup window
+ * @param {Object} oBoard Object to be updated
+ */
+function openEditBoardDialog(dialog, oBoard) {
+    "use strict";
+    var dlg_editBoard, task_code, task_name, task;
+
+    dlg_editBoard = showNewBoardDialog(dialog);
+    setNewBoardDialogFields(oBoard);
+
+    $(dlg_editBoard).unbind("dialogclose");
+    $(dlg_editBoard).bind("dialogclose", function(event, ui) {
+        $(dialog).removeClass("dialog");
+        $(dialog).addClass("dialog_hidden");
+    });
+
+    $(dlg_editBoard).dialog("open");
+    $(dlg_editBoard).dialog("option", "title", "<img class = 'icon' src = './img/task.png'/> Edit board");
+    $(dlg_editBoard).dialog("option", "buttons", {
+        "Save": function() {
+            updateBoard(dialog, oBoard);
+            refreshMyBoards();
+            setNewTaskDialogCombos(null);
+            $(this).dialog("close");
+        },
+        "Cancel": function() {
+            $(this).dialog("close");
+        }
+    });
+}
+
+/**
  * Opens a "New Project" dialog
  * @public
  *
@@ -315,6 +438,39 @@ function openNewProjectDialog(dialog) {
 }
 
 /**
+ * Opens a "Edit Project" dialog
+ * @public
+ *
+ * @param {Object} dialog div that acts like a popup window
+ * @param {Object} oProject Object to be updated
+ */
+function openEditProjectDialog(dialog, oProject) {
+    "use strict";
+    var dlg_newProject;
+
+    dlg_newProject = showNewProjectDialog(dialog);
+    setNewProjectDialogFields(oProject);
+
+    $(dlg_newProject).unbind("dialogclose");
+    $(dlg_newProject).bind("dialogclose", function(event, ui) {
+        $(dialog).removeClass("dialog");
+        $(dialog).addClass("dialog_hidden");
+    });
+
+    $(dlg_newProject).dialog("open");
+    $(dlg_newProject).dialog("option", "buttons", {
+        "Save": function() {
+            updateProject(dialog, oProject);
+            setNewTaskDialogCombos(null);
+            $(this).dialog("close");
+        },
+        "Cancel": function() {
+            $(this).dialog("close");
+        }
+    });
+}
+
+/**
  * Opens a "New User" dialog
  * @public
  *
@@ -343,6 +499,39 @@ function openNewUserDialog(dialog) {
 
             updateUser(dialog, oUser);
             addUser(oUser);
+            $(this).dialog("close");
+        },
+        "Cancel": function() {
+            $(this).dialog("close");
+        }
+    });
+}
+
+/**
+ * Opens a "Edit User" dialog
+ * @public
+ *
+ * @param {Object} dialog div that acts like a popup window
+ * @param {Object} oUser Object to be updated
+ */
+function openEditUserDialog(dialog, oUser) {
+    "use strict";
+    var dlg_newUser;
+
+    dlg_newUser = showNewUserDialog(dialog);
+    setNewUserDialogFields(oUser);
+
+    $(dlg_newUser).unbind("dialogclose");
+    $(dlg_newUser).bind("dialogclose", function(event, ui) {
+        $(dialog).removeClass("dialog");
+        $(dialog).addClass("dialog_hidden");
+    });
+
+    $(dlg_newUser).dialog("open");
+    $(dlg_newUser).dialog("option", "buttons", {
+        "Save": function() {
+            updateUser(dialog, oUser);
+            setNewTaskDialogCombos(null);
             $(this).dialog("close");
         },
         "Cancel": function() {

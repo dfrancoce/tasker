@@ -21,74 +21,130 @@ io.sockets.on('connection', function(socket) {
 
     // GETTERS
     socket.on('db_getBoards', function(data) {
-        db.getBoards(function(result) {
-            socket.emit('getBoards', result);
+        db.getBoards(function(result, error) {
+            if (error === null) {
+                socket.emit('getBoards', result, error);
+            }
         });
     });
 
     socket.on('db_getPriorities', function(data) {
-        db.getPriorities(function(result) {
-            socket.emit('getPriorities', result);
+        db.getPriorities(function(result, error) {
+            if (error === null) {
+                socket.emit('getPriorities', result, error);
+            }
         });
     });
 
     socket.on('db_getTypes', function(data) {
-        db.getTypes(function(result) {
-            socket.emit('getTypes', result);
+        db.getTypes(function(result, error) {
+            if (error === null) {
+                socket.emit('getTypes', result, error);
+            }
         });
     });
 
     socket.on('db_getUsers', function(data) {
-        db.getUsers(function(result) {
-            socket.emit('getUsers', result);
+        db.getUsers(function(result, error) {
+            if (error === null) {
+                socket.emit('getUsers', result, error);
+            }
         });
     });
 
     socket.on('db_getProjects', function(data) {
-        db.getProjects(function(result) {
-            socket.emit('getProjects', result);
+        db.getProjects(function(result, error) {
+            if (error === null) {
+                socket.emit('getProjects', result, error);
+            }
         });
     });
 
     socket.on('db_getTasks', function(data) {
-        db.getTasks(function(result) {
-            socket.emit('getTasks', result);
+        db.getTasks(function(result, error) {
+            if (error === null) {
+                socket.emit('getTasks', result, error);
+            }
         });
     });
     // END GETTERS
 
-    // BOARDS
-    socket.on('db_insertBoard', function(data) {
-        db.insertBoard(data, function(result) {
-            socket.emit('getBoards', result);
+    // TASKS
+    socket.on('db_insertTask', function(data) {
+        db.insertTask(data, function(result, error) {
+            if (error === null) {
+                socket.emit('getTasks', result, error);
+            }
         });
     });
 
+    socket.on('db_updateTask', function(data) {
+        db.updateTask(data);
+    });
+
+    socket.on('db_deleteTask', function(data) {
+        db.deleteTask(data, function(result, msg) {
+            socket.emit('onDeleteTask', result, msg);
+        });
+    });
+    // END TASKS
+
+    // BOARDS
+    socket.on('db_insertBoard', function(data) {
+        db.insertBoard(data, function(result, error) {
+            if (error === null) {
+                socket.emit('getBoards', result, error);
+            }
+        });
+    });
+
+    socket.on('db_updateBoard', function(data) {
+        db.updateBoard(data);
+    });
+
     socket.on('db_deleteBoard', function(data) {
-        db.deleteBoard(data);
+        db.deleteBoard(data, function(result, msg) {
+            socket.emit('onDeleteBoard', result, msg);
+        });
     });
     // END BOARDS
 
     // Projects
     socket.on('db_insertProject', function(data) {
-        db.insertProject(data, function(result) {
-            socket.emit('getProjects', result);
+        db.insertProject(data, function(result, error) {
+            if (error === null) {
+                socket.emit('getProjects', result, error);
+            }
         });
     });
 
+    socket.on('db_updateProject', function(data) {
+        db.updateProject(data);
+    });
+
     socket.on('db_deleteProject', function(data) {
-        db.deleteProject(data);
+        db.deleteProject(data, function(result, msg) {
+            socket.emit('onDeleteProject', result, msg);
+        });
     });
 
     //Users
     socket.on('db_insertUser', function(data) {
-        db.insertUser(data, function(result) {
-            socket.emit('getUsers', result);
+        db.insertUser(data, function(result, error) {
+            if (error === null) {
+                socket.emit('getUsers', result, error);
+            }
         });
     });
 
+    socket.on('db_updateUser', function(data) {
+        db.updateUser(data);
+    });
+
     socket.on('db_deleteUser', function(data) {
-        db.deleteUser(data);
+        db.deleteUser(data, function(result, msg) {
+            socket.emit('onDeleteUser', result, msg);
+        });
     });
 
     socket.on('disconnect', function(data) {

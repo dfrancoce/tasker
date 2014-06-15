@@ -26,60 +26,84 @@ function initData() {
 
     // Init boards
     socket.emit('db_getBoards');
-    socket.on('getBoards', function(data) {
-        for (var i = 0, len = data.rows.length; i < len; i++) {
-            boards.push(data.rows[i]);
-        }
+    socket.on('getBoards', function(data, error) {
+        if (error === null) {
+            for (var i = 0, len = data.rows.length; i < len; i++) {
+                boards.push(data.rows[i]);
+            }
 
-        // Each time we get boards from the database we must
-        // refresh the boards combo and the board itself.
-        refreshMyBoards();
-        refreshBoard();
+            // Each time we get boards from the database we must
+            // refresh the boards combo and the board itself.
+            refreshMyBoards();
+            refreshBoard();
+        } else {
+            console.log("Error retrieving boards");
+        }
     });
 
     // Init priorities
     socket.emit('db_getPriorities');
-    socket.on('getPriorities', function(data) {
-        for (var i = 0, len = data.rows.length; i < len; i++) {
-            priorities.push(data.rows[i]);
+    socket.on('getPriorities', function(data, error) {
+        if (error === null) {
+            for (var i = 0, len = data.rows.length; i < len; i++) {
+                priorities.push(data.rows[i]);
+            }
+        } else {
+            console.log("Error retrieving priorities");
         }
     });
 
     // Init types
     socket.emit('db_getTypes');
-    socket.on('getTypes', function(data) {
-        for (var i = 0, len = data.rows.length; i < len; i++) {
-            types.push(data.rows[i]);
+    socket.on('getTypes', function(data, error) {
+        if (error === null) {
+            for (var i = 0, len = data.rows.length; i < len; i++) {
+                types.push(data.rows[i]);
+            }
+        } else {
+            console.log("Error retrieving types");
         }
     });
 
     // Init projects
     socket.emit('db_getProjects');
-    socket.on('getProjects', function(data) {
-        for (var i = 0, len = data.rows.length; i < len; i++) {
-            projects.push(data.rows[i]);
+    socket.on('getProjects', function(data, error) {
+        if (error === null) {
+            for (var i = 0, len = data.rows.length; i < len; i++) {
+                projects.push(data.rows[i]);
+            }
+        } else {
+            console.log("Error retrieving projects");
         }
     });
 
     // Init users
     socket.emit('db_getUsers');
-    socket.on('getUsers', function(data) {
-        for (var i = 0, len = data.rows.length; i < len; i++) {
-            users.push(data.rows[i]);
+    socket.on('getUsers', function(data, error) {
+        if (error === null) {
+            for (var i = 0, len = data.rows.length; i < len; i++) {
+                users.push(data.rows[i]);
+            }
+        } else {
+            console.log("Error retriving users");
         }
     });
 
     // Init tasks
     socket.emit('db_getTasks');
-    socket.on('getTasks', function(data) {
-        for (var i = 0, len = data.rows.length; i < len; i++) {
-            tasks.push(data.rows[i]);
-        }
+    socket.on('getTasks', function(data, error) {
+        if (error === null) {
+            for (var i = 0, len = data.rows.length; i < len; i++) {
+                tasks.push(data.rows[i]);
+            }
 
-        // If we get tasks from the database we must refresh
-        // boards combo and the current board.
-        refreshMyBoards();
-        refreshBoard();
+            // If we get tasks from the database we must refresh
+            // boards combo and the current board.
+            refreshMyBoards();
+            refreshBoard();
+        } else {
+            console.log("Error retrieving tasks");
+        }
     });
 }
 
@@ -94,6 +118,29 @@ function openConnection() {
 }
 
 /**
+ * Finds an object in the tasks array by id and name
+ * @public
+ *
+ * @param taskId. Task id.
+ * @param taskName. Task name.
+ *
+ * @returns object ({ index: i, oTask: task[i] }) found or null
+ */
+function findTask(taskId, taskName) {
+    "use strict";
+    for (var i = 0, len = tasks.length; i < len; i++) {
+        if ((tasks[i].id === parseInt(taskId)) && (tasks[i].name === taskName)) {
+            return {
+                index: i,
+                oTask: tasks[i]
+            }; // Return as soon as the object is found
+        }
+    }
+
+    return null; // The object was not found
+}
+
+/**
  * Finds an object in the tasks array by code and name
  * @public
  *
@@ -102,7 +149,7 @@ function openConnection() {
  *
  * @returns object ({ index: i, oTask: task[i] }) found or null
  */
-function findTask(taskCode, taskName) {
+function findTaskByCodeName(taskCode, taskName) {
     "use strict";
     for (var i = 0, len = tasks.length; i < len; i++) {
         if ((tasks[i].code === taskCode) && (tasks[i].name === taskName)) {
@@ -124,10 +171,8 @@ function findTask(taskCode, taskName) {
  */
 function addTask(oTask) {
     "use strict";
-    if (findTask(oTask.code, oTask.name) === null) {
-        tasks.push(oTask);
-    } else {
-        console.log("Task with code " + oTask.code + " and name " + oTask.name + " already exists");
+    if (findTaskByCodeName(oTask.code, oTask.name) === null) {
+        socket.emit('db_insertTask', oTask); // insert task into the database
     }
 }
 
@@ -135,11 +180,22 @@ function addTask(oTask) {
  * Deletes the task passed by parameter from the array
  * @public
  *
- * @param index. Position of the task within the array.
+ * @param oTask. Object to be deleted.
  */
-function deleteTask(index) {
+function deleteTask(oTask) {
     "use strict";
-    tasks.splice(index, 1);
+
+    if (oTask !== null) {
+        socket.emit('db_deleteTask', oTask.oTask); // delete task from the database
+        socket.on('onDeleteTask', function(result, msg) {
+            if (result) {
+                tasks.splice(oTask.index, 1);
+                refreshBoard();
+            }
+
+            console.log(msg);
+        });
+    }
 }
 
 /**
@@ -153,16 +209,57 @@ function deleteTask(index) {
  */
 function updateTask(dialog, oTask) {
     "use strict";
-    oTask.code = $(dialog).find('input[name$="txtCode"]').val();
-    oTask.name = $(dialog).find('input[name$="txtName"]').val();
-    oTask.description = $(dialog).find('textarea[name$="txtDescription"]').val();
-    oTask.board = parseInt($(dialog).find('select[name$="cmbBoard"]').val());
-    oTask.estimation = parseInt($(dialog).find('input[name$="txtEstimation"]').val());
-    oTask.incurred = parseInt($(dialog).find('input[name$="txtIncurred"]').val());
-    oTask.project = parseInt($(dialog).find('select[name$="cmbProject"]').val());
-    oTask.priority = parseInt($(dialog).find('select[name$="cmbPriority"]').val());
-    oTask.type = parseInt($(dialog).find('select[name$="cmbType"]').val());
-    oTask.assignedTo = parseInt($(dialog).find('select[name$="cmbAssignedTo"]').val());
+    var new_task;
+
+    new_task = findTaskByCodeName(oTask.code, oTask.name);
+
+    if (new_task !== null) {
+        new_task.oTask.code = $(dialog).find('input[name$="txtCode"]').val();
+        new_task.oTask.name = $(dialog).find('input[name$="txtName"]').val();
+        new_task.oTask.description = $(dialog).find('textarea[name$="txtDescription"]').val();
+        new_task.oTask.board = parseInt($(dialog).find('select[name$="cmbBoard"]').val());
+
+        if ($(dialog).find('input[name$="txtEstimation"]').val() === "") {
+            new_task.oTask.estimation = 0;
+        } else {
+            new_task.oTask.estimation = parseInt($(dialog).find('input[name$="txtEstimation"]').val());
+        }
+
+        if ($(dialog).find('input[name$="txtIncurred"]').val() === "") {
+            new_task.oTask.incurred = 0;
+        } else {
+            new_task.oTask.incurred = parseInt($(dialog).find('input[name$="txtIncurred"]').val());
+        }
+
+        new_task.oTask.project = parseInt($(dialog).find('select[name$="cmbProject"]').val());
+        new_task.oTask.priority = parseInt($(dialog).find('select[name$="cmbPriority"]').val());
+        new_task.oTask.type = parseInt($(dialog).find('select[name$="cmbType"]').val());
+        new_task.oTask.assignedTo = parseInt($(dialog).find('select[name$="cmbAssignedTo"]').val());
+
+        socket.emit('db_updateTask', new_task.oTask);
+    } else {
+        oTask.code = $(dialog).find('input[name$="txtCode"]').val();
+        oTask.name = $(dialog).find('input[name$="txtName"]').val();
+        oTask.description = $(dialog).find('textarea[name$="txtDescription"]').val();
+        oTask.board = parseInt($(dialog).find('select[name$="cmbBoard"]').val());
+
+        if ($(dialog).find('input[name$="txtEstimation"]').val() === "") {
+            oTask.estimation = 0;
+        } else {
+            oTask.estimation = parseInt($(dialog).find('input[name$="txtEstimation"]').val());
+        }
+
+        if ($(dialog).find('input[name$="txtIncurred"]').val() === "") {
+            oTask.incurred = 0;
+        } else {
+            oTask.incurred = parseInt($(dialog).find('input[name$="txtIncurred"]').val());
+        }
+
+        oTask.project = parseInt($(dialog).find('select[name$="cmbProject"]').val());
+        oTask.priority = parseInt($(dialog).find('select[name$="cmbPriority"]').val());
+        oTask.type = parseInt($(dialog).find('select[name$="cmbType"]').val());
+        oTask.assignedTo = parseInt($(dialog).find('select[name$="cmbAssignedTo"]').val());
+    }
 }
 
 /**
@@ -179,11 +276,12 @@ function updateTaskState(taskName, taskState) {
 
     code = taskName.split('-')[0];
     name = taskName.split('-')[1];
-    task = findTask(code, name);
+    task = findTaskByCodeName(code, name);
 
     // We found it in the array
     if (task !== null) {
         task.oTask.state = parseInt(taskState);
+        socket.emit('db_updateTask', task.oTask);
     }
 }
 
@@ -209,6 +307,29 @@ function getTasksByBoard(board) {
 }
 
 /**
+ * Finds an object in the boards array by id and name
+ * @public
+ *
+ * @param boardId. Board id.
+ * @param boardName. Board name.
+ *
+ * @returns object ({ index: i, oBoard: boards[i] }) found or null
+ */
+function findBoard(boardId, boardName) {
+    "use strict";
+    for (var i = 0, len = boards.length; i < len; i++) {
+        if ((boards[i].id === parseInt(boardId)) && (boards[i].name === boardName)) {
+            return {
+                index: i,
+                oBoard: boards[i]
+            }; // Return as soon as the object is found
+        }
+    }
+
+    return null; // The object was not found
+}
+
+/**
  * Finds an object in the boards array by code and name
  * @public
  *
@@ -217,7 +338,7 @@ function getTasksByBoard(board) {
  *
  * @returns object ({ index: i, oBoard: boards[i] }) found or null
  */
-function findBoard(boardCode, boardName) {
+function findBoardByCodeName(boardCode, boardName) {
     "use strict";
     for (var i = 0, len = boards.length; i < len; i++) {
         if ((boards[i].code === boardCode) && (boards[i].name === boardName)) {
@@ -242,8 +363,16 @@ function findBoard(boardCode, boardName) {
  */
 function updateBoard(dialog, oBoard) {
     "use strict";
-    oBoard.code = $(dialog).find('input[name$="txtCode"]').val();
-    oBoard.name = $(dialog).find('input[name$="txtBoard"]').val();
+    var new_board;
+
+    new_board = findBoardByCodeName(oBoard.code, oBoard.name);
+
+    if (new_board !== null) {
+        new_board.oBoard.code = $(dialog).find('input[name$="txtCode"]').val();
+        new_board.oBoard.name = $(dialog).find('input[name$="txtBoard"]').val();
+
+        socket.emit('db_updateBoard', new_board.oBoard);
+    }
 }
 
 /**
@@ -254,10 +383,8 @@ function updateBoard(dialog, oBoard) {
  */
 function addBoard(oBoard) {
     "use strict";
-    if (findBoard(oBoard.code, oBoard.name) === null) {
+    if (findBoardByCodeName(oBoard.code, oBoard.name) === null) {
         socket.emit('db_insertBoard', oBoard); // insert board into the database
-    } else {
-        console.log("Board with code " + oBoard.code + " and name " + oBoard.name + " already exists");
     }
 }
 
@@ -269,15 +396,42 @@ function addBoard(oBoard) {
  */
 function deleteBoard(oBoard) {
     "use strict";
-    var my_board;
 
-    my_board = findBoard(oBoard.code, oBoard.name);
+    if (oBoard !== null) {
+        socket.emit('db_deleteBoard', oBoard.oBoard); // delete board from the database
+        socket.on('onDeleteBoard', function(result, msg) {
+            if (result) {
+                boards.splice(oBoard.index, 1);
+                refreshMyBoards();
+                setNewTaskDialogCombos(null);
+            }
 
-    if (my_board !== null) {
-        boards.splice(my_board.index, 1);
-    } else {
-        console.log("Board with code " + oBoard.code + " and name " + oBoard.name + " doesn't exist");
+            console.log(msg);
+        });
     }
+}
+
+/**
+ * Finds an object in the projects array by id and name
+ * @public
+ *
+ * @param projectCode. Project id.
+ * @param projectName. Project name.
+ *
+ * @returns object ({ index: i, oProject: projects[i] }) found or null
+ */
+function findProject(projectId, projectName) {
+    "use strict";
+    for (var i = 0, len = projects.length; i < len; i++) {
+        if ((projects[i].id === parseInt(projectId)) && (projects[i].name === projectName)) {
+            return {
+                index: i,
+                oProject: projects[i]
+            }; // Return as soon as the object is found
+        }
+    }
+
+    return null; // The object was not found
 }
 
 /**
@@ -289,7 +443,7 @@ function deleteBoard(oBoard) {
  *
  * @returns object ({ index: i, oProject: projects[i] }) found or null
  */
-function findProject(projectCode, projectName) {
+function findProjectByCodeName(projectCode, projectName) {
     "use strict";
     for (var i = 0, len = projects.length; i < len; i++) {
         if ((projects[i].code === projectCode) && (projects[i].name === projectName)) {
@@ -314,8 +468,16 @@ function findProject(projectCode, projectName) {
  */
 function updateProject(dialog, oProject) {
     "use strict";
-    oProject.code = $(dialog).find('input[name$="txtCode"]').val();
-    oProject.name = $(dialog).find('input[name$="txtProject"]').val();
+    var new_project;
+
+    new_project = findProjectByCodeName(oProject.code, oProject.name);
+
+    if (new_project !== null) {
+        new_project.oProject.code = $(dialog).find('input[name$="txtCode"]').val();
+        new_project.oProject.name = $(dialog).find('input[name$="txtProject"]').val();
+
+        socket.emit('db_updateProject', new_project.oProject);
+    }
 }
 
 /**
@@ -326,11 +488,8 @@ function updateProject(dialog, oProject) {
  */
 function addProject(oProject) {
     "use strict";
-    if (findProject(oProject.code, oProject.name) === null) {
-        projects.push(oProject);
-        socket.emit('db_insertProject', oProject); // insert into the database
-    } else {
-        console.log("Project with code " + oProject.code + " and name " + oProject.name + " already exists");
+    if (findProjectByCodeName(oProject.code, oProject.name) === null) {
+        socket.emit('db_insertProject', oProject); // insert project into the database
     }
 }
 
@@ -342,16 +501,41 @@ function addProject(oProject) {
  */
 function deleteProject(oProject) {
     "use strict";
-    var my_project;
 
-    my_project = findProject(oProject.code, oProject.name);
+    if (oProject !== null) {
+        socket.emit('db_deleteProject', oProject.oProject); // delete project from the database
+        socket.on('onDeleteProject', function(result, msg) {
+            if (result) {
+                projects.splice(oProject.index, 1);
+                setNewTaskDialogCombos(null);
+            }
 
-    if (my_project !== null) {
-        projects.splice(my_project.index, 1);
-        socket.emit('db_insertProject', oProject); // delete from the database
-    } else {
-        console.log("Project with code " + oProject.code + " and name " + oProject.name + " doesn't exist");
+            console.log(msg);
+        });
     }
+}
+
+/**
+ * Finds an object in the users array by id and name
+ * @public
+ *
+ * @param userCode. User id.
+ * @param userName. User name.
+ *
+ * @returns object ({ index: i, oUser: users[i] }) found or null
+ */
+function findUser(userId, userName) {
+    "use strict";
+    for (var i = 0, len = users.length; i < len; i++) {
+        if ((users[i].id === parseInt(userId)) && (users[i].name === userName)) {
+            return {
+                index: i,
+                oUser: users[i]
+            }; // Return as soon as the object is found
+        }
+    }
+
+    return null; // The object was not found
 }
 
 /**
@@ -363,7 +547,7 @@ function deleteProject(oProject) {
  *
  * @returns object ({ index: i, oUser: users[i] }) found or null
  */
-function findUser(userCode, userName) {
+function findUserByCodeName(userCode, userName) {
     "use strict";
     for (var i = 0, len = users.length; i < len; i++) {
         if ((users[i].code === userCode) && (users[i].name === userName)) {
@@ -388,8 +572,16 @@ function findUser(userCode, userName) {
  */
 function updateUser(dialog, oUser) {
     "use strict";
-    oUser.code = $(dialog).find('input[name$="txtCode"]').val();
-    oUser.name = $(dialog).find('input[name$="txtUserName"]').val();
+    var new_user;
+
+    new_user = findUserByCodeName(oUser.code, oUser.name);
+
+    if (new_user !== null) {
+        new_user.oUser.code = $(dialog).find('input[name$="txtCode"]').val();
+        new_user.oUser.name = $(dialog).find('input[name$="txtUserName"]').val();
+
+        socket.emit('db_updateUser', new_user.oUser);
+    }
 }
 
 /**
@@ -400,11 +592,8 @@ function updateUser(dialog, oUser) {
  */
 function addUser(oUser) {
     "use strict";
-    if (findUser(oUser.code, oUser.name) === null) {
-        users.push(oUser);
+    if (findUserByCodeName(oUser.code, oUser.name) === null) {
         socket.emit('db_insertUser', oUser); // insert user into the database
-    } else {
-        console.log("User with code " + oUser.code + " and name " + oUser.name + " already exists");
     }
 }
 
@@ -416,14 +605,16 @@ function addUser(oUser) {
  */
 function deleteUser(oUser) {
     "use strict";
-    var my_user;
 
-    my_user = findUser(oUser.code, oUser.name);
+    if (oUser !== null) {
+        socket.emit('db_deleteUser', oUser.oUser); // delete user from the database
+        socket.on('onDeleteUser', function(result, msg) {
+            if (result) {
+                users.splice(oUser.index, 1);
+                setNewTaskDialogCombos(null);
+            }
 
-    if (my_user !== null) {
-        users.splice(my_user.index, 1);
-        socket.emit('db_deleteUser', oUser); // delete user from the database
-    } else {
-        console.log("User with code " + oUser.code + " and name " + oUser.name + " doesn't exist");
+            console.log(msg);
+        });
     }
 }
