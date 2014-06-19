@@ -164,7 +164,8 @@ function findTaskByCodeName(taskCode, taskName) {
 }
 
 /**
- * Adds the task passed by parameter to the array
+ * Adds the task passed by parameter to the array and
+ * inserts the task into the database
  * @public
  *
  * @param oTask. Object task.
@@ -177,7 +178,8 @@ function addTask(oTask) {
 }
 
 /**
- * Deletes the task passed by parameter from the array
+ * Deletes the task passed by parameter from the array and
+ * removes the task from the database table
  * @public
  *
  * @param oTask. Object to be deleted.
@@ -186,10 +188,10 @@ function deleteTask(oTask) {
     "use strict";
 
     if (oTask !== null) {
+        tasks.splice(oTask.index, 1);
         socket.emit('db_deleteTask', oTask.oTask); // delete task from the database
         socket.on('onDeleteTask', function(result, msg) {
             if (result) {
-                tasks.splice(oTask.index, 1);
                 refreshBoard();
             }
 
@@ -200,7 +202,7 @@ function deleteTask(oTask) {
 
 /**
  * Updates the task object properties with the data introduced by
- * the user
+ * the user and persist the changes to the database
  *
  * @public
  *
@@ -234,7 +236,7 @@ function updateTask(dialog, oTask) {
         new_task.oTask.project = parseInt($(dialog).find('select[name$="cmbProject"]').val());
         new_task.oTask.priority = parseInt($(dialog).find('select[name$="cmbPriority"]').val());
         new_task.oTask.type = parseInt($(dialog).find('select[name$="cmbType"]').val());
-        new_task.oTask.assignedTo = parseInt($(dialog).find('select[name$="cmbAssignedTo"]').val());
+        new_task.oTask.assignedto = parseInt($(dialog).find('select[name$="cmbAssignedTo"]').val());
 
         socket.emit('db_updateTask', new_task.oTask);
     } else {
@@ -258,12 +260,12 @@ function updateTask(dialog, oTask) {
         oTask.project = parseInt($(dialog).find('select[name$="cmbProject"]').val());
         oTask.priority = parseInt($(dialog).find('select[name$="cmbPriority"]').val());
         oTask.type = parseInt($(dialog).find('select[name$="cmbType"]').val());
-        oTask.assignedTo = parseInt($(dialog).find('select[name$="cmbAssignedTo"]').val());
+        oTask.assignedto = parseInt($(dialog).find('select[name$="cmbAssignedTo"]').val());
     }
 }
 
 /**
- * Updates the tasks array after each move between
+ * Updates the tasks array and database table after each move between
  * boards
  * @public
  *
@@ -286,7 +288,7 @@ function updateTaskState(taskName, taskState) {
 }
 
 /**
- * Gets all the tasks objects filtered by board
+ * Gets all the tasks objects from the array filtered by board
  * @public
  *
  * @param board. board id.
@@ -354,7 +356,7 @@ function findBoardByCodeName(boardCode, boardName) {
 
 /**
  * Updates the board object properties with the data introduced by
- * the user
+ * the user and persists the changes to the database
  *
  * @public
  *
@@ -372,11 +374,15 @@ function updateBoard(dialog, oBoard) {
         new_board.oBoard.name = $(dialog).find('input[name$="txtBoard"]').val();
 
         socket.emit('db_updateBoard', new_board.oBoard);
+    } else {
+        oBoard.code = $(dialog).find('input[name$="txtCode"]').val();
+        oBoard.name = $(dialog).find('input[name$="txtBoard"]').val();
     }
 }
 
 /**
- * Adds the board passed by parameter to the array
+ * Adds the board passed by parameter to the array and inserts the
+ * the element into the database
  * @public
  *
  * @param oBoard. Object board.
@@ -389,7 +395,8 @@ function addBoard(oBoard) {
 }
 
 /**
- * Deletes the board passed by parameter from the array
+ * Deletes the board passed by parameter from the array and from the
+ * database
  * @public
  *
  * @param oBoard. Object board.
@@ -459,7 +466,7 @@ function findProjectByCodeName(projectCode, projectName) {
 
 /**
  * Updates the project object properties with the data introduced by
- * the user
+ * the user and persists the changes to the database
  *
  * @public
  *
@@ -477,11 +484,15 @@ function updateProject(dialog, oProject) {
         new_project.oProject.name = $(dialog).find('input[name$="txtProject"]').val();
 
         socket.emit('db_updateProject', new_project.oProject);
+    } else {
+        oProject.code = $(dialog).find('input[name$="txtCode"]').val();
+        oProject.name = $(dialog).find('input[name$="txtProject"]').val();
     }
 }
 
 /**
- * Adds the project passed by parameter to the array
+ * Adds the project passed by parameter to the array and inserts
+ * the element into the database
  * @public
  *
  * @param oProject. Object project.
@@ -494,7 +505,8 @@ function addProject(oProject) {
 }
 
 /**
- * Deletes the project passed by parameter from the array
+ * Deletes the project passed by parameter from the array and from
+ * the database table
  * @public
  *
  * @param oProject. Object project
@@ -503,10 +515,10 @@ function deleteProject(oProject) {
     "use strict";
 
     if (oProject !== null) {
+        projects.splice(oProject.index, 1);
         socket.emit('db_deleteProject', oProject.oProject); // delete project from the database
         socket.on('onDeleteProject', function(result, msg) {
             if (result) {
-                projects.splice(oProject.index, 1);
                 setNewTaskDialogCombos(null);
             }
 
@@ -563,7 +575,7 @@ function findUserByCodeName(userCode, userName) {
 
 /**
  * Updates the user object properties with the data introduced by
- * the user
+ * the user and persists the changes to the database
  *
  * @public
  *
@@ -581,11 +593,15 @@ function updateUser(dialog, oUser) {
         new_user.oUser.name = $(dialog).find('input[name$="txtUserName"]').val();
 
         socket.emit('db_updateUser', new_user.oUser);
+    } else {
+        oUser.code = $(dialog).find('input[name$="txtCode"]').val();
+        oUser.name = $(dialog).find('input[name$="txtUserName"]').val();
     }
 }
 
 /**
- * Adds the user passed by parameter to the array
+ * Adds the user passed by parameter to the array and inserts
+ * the element into the database
  * @public
  *
  * @param oUser. Object user.
@@ -598,7 +614,8 @@ function addUser(oUser) {
 }
 
 /**
- * Deletes the user passed by parameter from the array
+ * Deletes the user passed by parameter from the array and
+ * removes the element from the database
  * @public
  *
  * @param oUser. Object user
@@ -607,10 +624,10 @@ function deleteUser(oUser) {
     "use strict";
 
     if (oUser !== null) {
+        users.splice(oUser.index, 1);
         socket.emit('db_deleteUser', oUser.oUser); // delete user from the database
         socket.on('onDeleteUser', function(result, msg) {
             if (result) {
-                users.splice(oUser.index, 1);
                 setNewTaskDialogCombos(null);
             }
 

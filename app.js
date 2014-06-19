@@ -109,7 +109,7 @@ io.sockets.on('connection', function(socket) {
     });
     // END BOARDS
 
-    // Projects
+    // PROJECTS
     socket.on('db_insertProject', function(data) {
         db.insertProject(data, function(result, error) {
             if (error === null) {
@@ -127,8 +127,9 @@ io.sockets.on('connection', function(socket) {
             socket.emit('onDeleteProject', result, msg);
         });
     });
+    // END PROJECTS
 
-    //Users
+    // USERS
     socket.on('db_insertUser', function(data) {
         db.insertUser(data, function(result, error) {
             if (error === null) {
@@ -146,6 +147,7 @@ io.sockets.on('connection', function(socket) {
             socket.emit('onDeleteUser', result, msg);
         });
     });
+    // END USERS
 
     socket.on('disconnect', function(data) {
 

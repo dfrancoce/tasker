@@ -154,6 +154,13 @@ function showDeleteDialog() {
     return $(dialog);
 }
 
+/**
+ * Adds the "edit" and "delete" functionality to the
+ * "new task" and "edit task" dialogs
+ * @public
+ *
+ * @param dlg_newTask. Div that represents the dialog
+ */
 function addEditDeleteToTaskDialog(dlg_newTask) {
     // Adds "delete" functionality
     $(dlg_newTask).find('img.iconDel').unbind('click');
@@ -166,11 +173,14 @@ function addEditDeleteToTaskDialog(dlg_newTask) {
         $(dialog).dialog("open");
         $(dialog).dialog("option", "buttons", {
             "Yes": function() {
+                // We get the values from the select and the name of the entity
+                // to remove
                 select = $(img).siblings('select');
                 entity_name = $(select).attr('id').replace('cmb', '');
                 id_to_remove = $(select).find('option:selected').val();
                 name_to_remove = $(select).find('option:selected').text();
 
+                // We delete the element selected
                 switch (entity_name) {
                     case 'Board':
                         var oBoard = findBoard(id_to_remove, name_to_remove);
@@ -199,12 +209,15 @@ function addEditDeleteToTaskDialog(dlg_newTask) {
     $(dlg_newTask).find('img.iconEdit').click(function() {
         var dialog, img, id_to_edit, name_to_edit, entity_name, select;
 
+        // We get the values from the select and the name of the entity
+        // to remove
         img = $(this);
         select = $(img).siblings('select');
         entity_name = $(select).attr('id').replace('cmb', '');
         id_to_edit = $(select).find('option:selected').val();
         name_to_edit = $(select).find('option:selected').text();
 
+        // We edit the entity selected
         switch (entity_name) {
             case 'Board':
                 var oBoard = findBoard(id_to_edit, name_to_edit);
@@ -271,7 +284,7 @@ function openNewTaskDialog(dialog) {
                 "type": 0,
                 "estimation": 0,
                 "incurred": 0,
-                "assignedTo": 0
+                "assignedto": 0
             };
 
             updateTask(dialog, oTask);
@@ -658,7 +671,8 @@ function setDroppables() {
  */
 function setNewTaskDialogCombos(oTask) {
     "use strict";
-    // Boards 
+    // Boards
+    $("select[name$='cmbBoard']").find('option').remove();
     for (var i = 0, len = boards.length; i < len; i++) {
         $("select[name$='cmbBoard']")[0].options[i] = new Option(
             boards[i].name,
@@ -666,7 +680,8 @@ function setNewTaskDialogCombos(oTask) {
         );
     };
 
-    // Projects 
+    // Projects
+    $("select[name$='cmbProject']").find('option').remove();
     for (var i = 0, len = projects.length; i < len; i++) {
         $("select[name$='cmbProject']")[0].options[i] = new Option(
             projects[i].name,
@@ -675,6 +690,7 @@ function setNewTaskDialogCombos(oTask) {
     };
 
     // Priorities
+    $("select[name$='cmbPriority']").find('option').remove();
     for (var i = 0, len = priorities.length; i < len; i++) {
         $("select[name$='cmbPriority']")[0].options[i] = new Option(
             priorities[i].name,
@@ -683,6 +699,7 @@ function setNewTaskDialogCombos(oTask) {
     };
 
     // Types
+    $("select[name$='cmbType']").find('option').remove();
     for (var i = 0, len = types.length; i < len; i++) {
         $("select[name$='cmbType']")[0].options[i] = new Option(
             types[i].name,
@@ -691,6 +708,7 @@ function setNewTaskDialogCombos(oTask) {
     };
 
     // Users
+    $("select[name$='cmbAssignedTo']").find('option').remove();
     for (var i = 0, len = users.length; i < len; i++) {
         $("select[name$='cmbAssignedTo']")[0].options[i] = new Option(
             users[i].name,
@@ -703,7 +721,7 @@ function setNewTaskDialogCombos(oTask) {
         $("select[name$='cmbProject']").find("option[value='" + oTask.project + "']").attr("selected", "selected");
         $("select[name$='cmbPriority']").find("option[value='" + oTask.priority + "']").attr("selected", "selected");
         $("select[name$='cmbType']").find("option[value='" + oTask.type + "']").attr("selected", "selected");
-        $("select[name$='cmbAssignedTo']").find("option[value='" + oTask.assignedTo + "']").attr("selected", "selected");
+        $("select[name$='cmbAssignedTo']").find("option[value='" + oTask.assignedto + "']").attr("selected", "selected");
     } else {
         $("select[name$='cmbBoard']").find("option:first").attr("selected", "selected");
         $("select[name$='cmbProject']").find("option:first").attr("selected", "selected");
@@ -813,6 +831,10 @@ function setNewUserDialogFields(oUser) {
  */
 function refreshMyBoards() {
     "use strict";
+    var value;
+
+    // Get selected value
+    value = $("select[name$='cmbMyBoards']").find("option:selected").val();
 
     // Remove all the options
     $("select[name$='cmbMyBoards']").empty();
@@ -823,6 +845,10 @@ function refreshMyBoards() {
             boards[i].name,
             boards[i].id
         );
+
+        if (parseInt(value) === boards[i].id) {
+            $("select[name$='cmbMyBoards']").find("option[value='" + boards[i].id + "']").attr("selected", "selected");
+        }
     }
 }
 

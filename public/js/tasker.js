@@ -8,168 +8,6 @@
  */
 
 /**
- * Generates some tasks to run some testing
- *
- * @public
- */
-function test_init() {
-    // Projects
-    var p1 = {
-        "code": "101",
-        "name": "PA"
-    }
-
-    var p2 = {
-        "code": "102",
-        "name": "PB"
-    }
-
-    var p3 = {
-        "code": "103",
-        "name": "PC"
-    }
-
-    projects.push(p1);
-    projects.push(p2);
-    projects.push(p3);
-    // </> Projects
-
-    // Priorities
-    var pr1 = {
-        "code": "1",
-        "name": "Low"
-    }
-
-    var pr2 = {
-        "code": "2",
-        "name": "Medium"
-    }
-
-    var pr3 = {
-        "code": "3",
-        "name": "High"
-    }
-
-    priorities.push(pr1);
-    priorities.push(pr2);
-    priorities.push(pr3);
-    // </> Priorities
-
-    // Types
-    var ty1 = {
-        "code": "1",
-        "name": "Development"
-    }
-
-    var ty2 = {
-        "code": "2",
-        "name": "Testing"
-    }
-
-    var ty3 = {
-        "code": "3",
-        "name": "Documentation"
-    }
-
-    types.push(ty1);
-    types.push(ty2);
-    types.push(ty3);
-    // </> Types
-
-    // Users
-    var u1 = {
-        "code": "1",
-        "name": "User 1"
-    }
-
-    var u2 = {
-        "code": "2",
-        "name": "User 2"
-    }
-
-    var u3 = {
-        "code": "3",
-        "name": "User 3"
-    }
-
-    users.push(u1);
-    users.push(u2);
-    users.push(u3);
-    // </> Types
-
-    // Boards
-    var b1 = {
-        "code": "1",
-        "name": "Projects C++"
-    }
-
-    var b2 = {
-        "code": "2",
-        "name": "Projects Java"
-    }
-
-    boards.push(b1);
-    boards.push(b2);
-    // </> Boards
-
-    // Tasks
-    var t1 = {
-        "code": "t1",
-        "name": "Test 1",
-        "description": "Description of the test 1",
-        "board": "1",
-        "state": "1",
-        "project": "1",
-        "priority": "1",
-        "type": "2",
-        "estimation": "16",
-        "incurred": "4",
-        "assignedTo": "2"
-    }
-
-    var t2 = {
-        "code": "t2",
-        "name": "Test 2",
-        "description": "Description of the test 2",
-        "board": "1",
-        "state": "1",
-        "project": "2",
-        "priority": "2",
-        "type": "1",
-        "estimation": "24",
-        "incurred": "2",
-        "assignedTo": "1"
-    }
-
-    var t3 = {
-        "code": "t3",
-        "name": "Test 3",
-        "description": "Description of the test 3",
-        "board": "2",
-        "state": "1",
-        "project": "3",
-        "priority": "3",
-        "type": "3",
-        "estimation": "8",
-        "incurred": "6",
-        "assignedTo": "3"
-    }
-
-    tasks.push(t1);
-    tasks.push(t2);
-    tasks.push(t3);
-    // </> Tasks	
-
-    refreshMyBoards();
-    refreshBoard();
-    /*$toDo = $(".board_toDo");
-    for (i = 0; i < tasks.length; i++) {
-        var $el = generateTaskElement(tasks[i].code + '-' + tasks[i].name, "toDo");
-        stickTask($el, "toDo");
-    }*/
-};
-
-/**
  * Generates the element task draggable within
  * the div droppable
  * @public
@@ -288,11 +126,11 @@ function stickTask(item, boardClassName) {
                 // Finds the task in the array by code and name
                 task_code = $(img).siblings('span').text().split('-')[0];
                 task_name = $(img).siblings('span').text().split('-')[1];
-                task = findTask(task_code, task_name);
+                task = findTaskByCodeName(task_code, task_name);
 
                 if (task !== null) {
                     // Deletes task from the array
-                    deleteTask(task.index);
+                    deleteTask(task);
                 }
 
                 $(img).closest('table').hide("fold", {}, 500, function() {
@@ -309,12 +147,3 @@ function stickTask(item, boardClassName) {
 
     setDraggables();
 }
-
-/**
- * After loading...
- * @public
- */
-$(document).ready(function() {
-    "use strict";
-    //test_init();
-});

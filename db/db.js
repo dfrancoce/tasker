@@ -8,6 +8,17 @@ function openConnection() {
 }
 
 // GETTERS
+
+/**
+ * Executes the sql with the arguments
+ * passed by parameter and executes the callback
+ * @public
+ *
+ * @param sql. Sql to execute.
+ * @param parameters. Parameters for the sql.
+ * @param callback. Function to execute in return
+ *
+ */
 function getEntityCollection(sql, parameters, callback) {
     var query;
 
@@ -30,6 +41,13 @@ function getEntityCollection(sql, parameters, callback) {
     });
 }
 
+/**
+ * Get all the boards from the database
+ * @public
+ *
+ * @param callback. Function to execute in return
+ *
+ */
 function getBoards(callback) {
     var sql;
 
@@ -37,6 +55,13 @@ function getBoards(callback) {
     getEntityCollection(sql, [], callback);
 }
 
+/**
+ * Get all the priorities from the database
+ * @public
+ *
+ * @param callback. Function to execute in return
+ *
+ */
 function getPriorities(callback) {
     var sql;
 
@@ -44,6 +69,13 @@ function getPriorities(callback) {
     getEntityCollection(sql, [], callback);
 }
 
+/**
+ * Get all the types from the database
+ * @public
+ *
+ * @param callback. Function to execute in return
+ *
+ */
 function getTypes(callback) {
     var sql;
 
@@ -51,6 +83,13 @@ function getTypes(callback) {
     getEntityCollection(sql, [], callback);
 }
 
+/**
+ * Get all the projects from the database
+ * @public
+ *
+ * @param callback. Function to execute in return
+ *
+ */
 function getProjects(callback) {
     var sql;
 
@@ -58,6 +97,13 @@ function getProjects(callback) {
     getEntityCollection(sql, [], callback);
 }
 
+/**
+ * Get all the users from the database
+ * @public
+ *
+ * @param callback. Function to execute in return
+ *
+ */
 function getUsers(callback) {
     var sql;
 
@@ -65,6 +111,13 @@ function getUsers(callback) {
     getEntityCollection(sql, [], callback);
 }
 
+/**
+ * Get all the tasks from the database
+ * @public
+ *
+ * @param callback. Function to execute in return
+ *
+ */
 function getTasks(callback) {
     var sql;
 
@@ -75,6 +128,13 @@ function getTasks(callback) {
 // END GETTERS
 
 // TASKS
+
+/**
+ * Creates an array of tasks parameters and returns it
+ * @public
+ *
+ * @returns parameters. An array of parameters
+ */
 function getTaskParameters(oTask) {
     var parameters = [];
 
@@ -84,6 +144,13 @@ function getTaskParameters(oTask) {
     return parameters;
 }
 
+/**
+ * Inserts a task into the database
+ * @public
+ *
+ * @param oTask. Object Task to insert into the database
+ * @param callback. Function to execute after the insert
+ */
 function insertTask(oTask, callback) {
     var query, sql, parameters, parameters_insert = [];
 
@@ -97,15 +164,22 @@ function insertTask(oTask, callback) {
     parameters_insert.push(oTask.type);
     parameters_insert.push(oTask.estimation);
     parameters_insert.push(oTask.incurred);
-    parameters_insert.push(oTask.assignedTo);
+    parameters_insert.push(oTask.assignedto);
 
-    client.query('INSERT INTO "Tasks" (code, name, description, board, state, project, priority, type, estimation, incurred, assignedTo) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)', parameters_insert);
+    client.query('INSERT INTO "Tasks" (code, name, description, board, state, project, priority, type, estimation, incurred, assignedto) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)', parameters_insert);
 
     parameters = getTaskParameters(oTask);
     sql = 'SELECT * FROM "Tasks" WHERE code = $1 and name = $2';
     getEntityCollection(sql, parameters, callback);
 }
 
+/**
+ * Updates a task
+ * @public
+ *
+ * @param oTask. Object Task to update
+ *
+ */
 function updateTask(oTask) {
     var parameters = [];
 
@@ -118,21 +192,35 @@ function updateTask(oTask) {
     parameters.push(oTask.type);
     parameters.push(oTask.estimation);
     parameters.push(oTask.incurred);
-    parameters.push(oTask.assignedTo);
+    parameters.push(oTask.assignedto);
     parameters.push(oTask.id);
-    client.query('UPDATE "Tasks" SET code = $1, name = $2, description = $3, board = $4, state = $5, project = $6, priority = $7, type = $8, estimation = $9, incurred = $10, assignedTo = $11 WHERE id = $12', parameters);
+    client.query('UPDATE "Tasks" SET code = $1, name = $2, description = $3, board = $4, state = $5, project = $6, priority = $7, type = $8, estimation = $9, incurred = $10, assignedto = $11 WHERE id = $12', parameters);
 }
 
+/**
+ * Deletes a task from the database
+ * @public
+ *
+ * @param oTask. Object Task to delete from the database
+ * @param callback. Function to execute after the delete
+ */
 function deleteTask(oTask, callback) {
     var parameters = [];
 
-    parameters = getTaskParameters(oTask);
-    client.query('DELETE FROM "Tasks" WHERE code = $1 AND name = $2', parameters);
-    callback(true, "Board deleted");
+    parameters.push(oTask.id);
+    client.query('DELETE FROM "Tasks" WHERE id = $1', parameters);
+    callback(true, "Task deleted");
 }
 // END TASKS
 
 // BOARDS
+
+/**
+ * Creates an array of boards parameters and returns it
+ * @public
+ *
+ * @returns parameters. An array of parameters
+ */
 function getBoardParameters(oBoard) {
     var parameters = [];
 
@@ -142,6 +230,13 @@ function getBoardParameters(oBoard) {
     return parameters;
 }
 
+/**
+ * Inserts a board into the database
+ * @public
+ *
+ * @param oBoard. Object Board to insert into the database
+ * @param callback. Function to execute after the insert
+ */
 function insertBoard(oBoard, callback) {
     var query, sql, parameters;
 
@@ -151,6 +246,13 @@ function insertBoard(oBoard, callback) {
     getEntityCollection(sql, parameters, callback);
 }
 
+/**
+ * Updates a board
+ * @public
+ *
+ * @param oBoard. Object Board to update
+ *
+ */
 function updateBoard(oBoard) {
     var parameters;
 
@@ -159,6 +261,13 @@ function updateBoard(oBoard) {
     client.query('UPDATE "Boards" SET code = $1, name = $2 WHERE id = $3', parameters);
 }
 
+/**
+ * Deletes a board from the database
+ * @public
+ *
+ * @param oBoard. Object Board to delete from the database
+ * @param callback. Function to execute after the delete
+ */
 function deleteBoard(oBoard, callback) {
     var query, sql, parameters = [];
 
@@ -183,6 +292,13 @@ function deleteBoard(oBoard, callback) {
 // END BOARDS
 
 // PROJECTS
+
+/**
+ * Creates an array of projects parameters and returns it
+ * @public
+ *
+ * @returns parameters. An array of parameters
+ */
 function getProjectParameters(oProject) {
     var parameters = [];
 
@@ -192,6 +308,13 @@ function getProjectParameters(oProject) {
     return parameters;
 }
 
+/**
+ * Inserts a project into the database
+ * @public
+ *
+ * @param oProject. Object Project to insert into the database
+ * @param callback. Function to execute after the insert
+ */
 function insertProject(oProject, callback) {
     var query, sql, parameters;
 
@@ -201,6 +324,13 @@ function insertProject(oProject, callback) {
     getEntityCollection(sql, parameters, callback);
 }
 
+/**
+ * Updates a project
+ * @public
+ *
+ * @param oProject. Object Project to update
+ *
+ */
 function updateProject(oProject) {
     var parameters;
 
@@ -209,6 +339,13 @@ function updateProject(oProject) {
     client.query('UPDATE "Projects" SET code = $1, name = $2 WHERE id = $3', parameters);
 }
 
+/**
+ * Deletes a project from the database
+ * @public
+ *
+ * @param oProject. Object Project to delete from the database
+ * @param callback. Function to execute after the delete
+ */
 function deleteProject(oProject, callback) {
     var query, sql, parameters = [];
 
@@ -233,6 +370,13 @@ function deleteProject(oProject, callback) {
 // END PROJECTS
 
 // USERS
+
+/**
+ * Creates an array of users parameters and returns it
+ * @public
+ *
+ * @returns parameters. An array of parameters
+ */
 function getUserParameters(oUser) {
     var parameters = [];
 
@@ -242,6 +386,13 @@ function getUserParameters(oUser) {
     return parameters;
 }
 
+/**
+ * Inserts an user into the database
+ * @public
+ *
+ * @param oUser. Object User to insert into the database
+ * @param callback. Function to execute after the insert
+ */
 function insertUser(oUser, callback) {
     var query, sql, parameters;
 
@@ -251,6 +402,13 @@ function insertUser(oUser, callback) {
     getEntityCollection(sql, parameters, callback);
 }
 
+/**
+ * Updates an user
+ * @public
+ *
+ * @param oUser. Object User to update
+ *
+ */
 function updateUser(oUser) {
     var parameters;
 
@@ -259,11 +417,18 @@ function updateUser(oUser) {
     client.query('UPDATE "Users" SET code = $1, name = $2 WHERE id = $3', parameters);
 }
 
+/**
+ * Deletes an user from the database
+ * @public
+ *
+ * @param oUser. Object User to delete from the database
+ * @param callback. Function to execute after the delete
+ */
 function deleteUser(oUser, callback) {
     var query, sql, parameters = [];
 
     // Checking if there is any task for this user
-    sql = 'SELECT * FROM "Tasks" WHERE assignedTo = $1';
+    sql = 'SELECT * FROM "Tasks" WHERE assignedto = $1';
     parameters.push(oUser.id);
 
     getEntityCollection(sql, parameters, function(result, error) {
