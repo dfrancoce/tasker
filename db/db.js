@@ -2,7 +2,7 @@ var pg = require("pg");
 var connection_string, client;
 
 function openConnection() {
-    connection_string = "pg://postgres:admin@localhost:5432/taskerDB";
+    connection_string = "pg://postgres:postgres@localhost:5432/taskerDB";
     client = new pg.Client(connection_string);
     client.connect();
 }
