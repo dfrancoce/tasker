@@ -1,4 +1,4 @@
-Tasker
+tasker
 ======
 
 Tasks manager (kanban style) written in HTML+CSS+Javascript(JQuery+UI) and nodeJS + postgresql (Backend)
