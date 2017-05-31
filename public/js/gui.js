@@ -26,7 +26,7 @@ function showNewBoardDialog(dialog) {
         autoOpen: false,
         resizable: false,
         hide: {
-            effect: 'fold',
+            effect: 'fade',
             duration: 500
         }
     });
@@ -53,7 +53,7 @@ function showNewTaskDialog(dialog) {
         autoOpen: false,
         resizable: false,
         hide: {
-            effect: 'fold',
+            effect: 'fade',
             duration: 500
         }
     });
@@ -80,7 +80,7 @@ function showNewProjectDialog(dialog) {
         autoOpen: false,
         resizable: false,
         hide: {
-            effect: 'fold',
+            effect: 'fade',
             duration: 500
         }
     });
@@ -107,7 +107,7 @@ function showNewUserDialog(dialog) {
         autoOpen: false,
         resizable: false,
         hide: {
-            effect: 'fold',
+            effect: 'fade',
             duration: 500
         }
     });
@@ -138,7 +138,7 @@ function showDeleteDialog() {
     $(dialog).append($(message));
 
     $(dialog).dialog({
-        width: "250",
+        width: "300",
         height: "auto",
         modal: true,
         title: "<img class = 'icon' src = './img/trash.png'/> Delete",
@@ -146,7 +146,7 @@ function showDeleteDialog() {
         autoOpen: false,
         resizable: false,
         hide: {
-            effect: 'fold',
+            effect: 'fade',
             duration: 500
         }
     });

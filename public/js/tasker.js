@@ -69,7 +69,7 @@ function stickTask(item, boardClassName) {
 
     board = $(".board_" + boardClassName);
 
-    // Get the "name" of the task and remove it 
+    // Get the "name" of the task and remove it
     // from the original board
     task_name = $(item).text();
     $(item).closest("table").remove();
@@ -133,7 +133,7 @@ function stickTask(item, boardClassName) {
                     deleteTask(task);
                 }
 
-                $(img).closest('table').hide("fold", {}, 500, function() {
+                $(img).closest('table').hide("explode", {}, 500, function() {
                     $(this).remove();
                 });
 

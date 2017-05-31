@@ -7,26 +7,26 @@
 
 /* ============= Structure ============= */
 body {
-    background-color: FFFFDD;
+    background-color: #ECECEA;
     position: relative;
-    height: auto;    
+    height: auto;
     min-height: 100% !important;
     overflow-y: auto;
 }
 
 div.menu, div.title {
-    margin: 0 auto;  
-    width: 50%;
+    margin: 0 auto;
+    width: 20%;
 }
 
 div.title span {
     vertical-align: middle;
-    font-size: 20pt;    
+    font-size: 20pt;
     border-bottom: medium none;
-    color: #C3C36E;
-    font-family: Georgia;
-    font-weight: bold;
-    letter-spacing: 1em;
+    color: #666666;
+    font-family: Helvetica;
+    font-weight: lighter;
+    letter-spacing: 1.4em;
     text-decoration: none;
     text-transform: uppercase;
 }
@@ -43,7 +43,7 @@ div.main
 
 div.board {
     margin-left: 10px;
-    width: 80%;
+    width: 99%;
     position: relative;
     height: auto;
     min-height: 80% !important;
@@ -63,11 +63,12 @@ div.board_toDo, div.board_progress, div.board_finished {
 }
 
 div.board_toDo span.title, div.board_progress span.title, div.board_finished span.title {
-    margin-left: 10px;    
-    font-size: 12pt;
-    font-family: Georgia;
+    margin-left: 5px;
+    margin-top: 5px;
+    margin-bottom: 10px;
+    font-size: 16pt;
+    font-family: Helvetica;
     font-weight: lighter;
-    letter-spacing: 0.2em;
     color: #666666;
     vertical-align:bottom;
     text-align: center;
@@ -79,15 +80,15 @@ div.myBoards {
     margin-bottom: 10px;
     width: 80%;
     position: relative;
-    height: auto;    
+    height: auto;
     overflow-y: auto;
     overflow-x: hidden;
 }
 
 div.myBoards label {
     font-size: 10pt;
-    font-family: Georgia;
-    font-weight: lighter;    
+    font-family: Helvetica;
+    font-weight: lighter;
     color: #666666;
 }
 
@@ -100,12 +101,12 @@ div.subTitle {
 /* ============== Dialogs ============== */
 
 div.dialog_hidden {
-    display: none;    
+    display: none;
     overflow-x: hidden;
 }
 
 div.dialog {
-    display: block;    
+    display: block;
     overflow-x: hidden;
 }
 
@@ -128,7 +129,7 @@ img.iconDialogMessage {
 }
 
 img.iconDel, img.iconEdit
-{    
+{
     cursor:pointer;
     height:24px;
     width:24px;
@@ -143,36 +144,39 @@ table.tasks
     border-style: solid;
     border-color: #4682B4;
     border-width: 1.2px;
-    border-radius: 4px;
     padding: 0px 5px;
     margin-left:0.5em;
-    margin-top: 0.5em;    
+    margin-top: 0.5em;
     background-color: white;
     float: left;
 }
 /* ===================================== */
 
 /* ================ Texts ============== */
-span, label, input.text, textarea.text, select.text {
-    font-family: Helvetica;
-    font-size: 8pt;
-    font-weight: lighter;
-}
 
 label.text {
     display: inline-block;
     width: 80px;
 }
 
+select.text {
+    text-align: left;
+    font-family: Helvetica;
+    font-weight: lighter;
+    font-size: 10pt;
+    width: 20%;
+    margin-bottom: 5px;
+}
+
 span.taskName
 {
-    display: inline-block;    
+    display: inline-block;
     text-align: left;
     cursor: pointer;
-    font-family: Century Gothic;
+    font-family: Helvetica;
     font-weight: lighter;
-    font-size: 8pt;
-    color: #4682B4;    
+    font-size: 10pt;
+    color: #4682B4;
 }
 
 ul
@@ -186,18 +190,18 @@ ul
 
 li
 {
-    display:inline;    
+    display:inline;
 }
 
 li > a {
     cursor: pointer;
     font-size: 10pt;
-    font-family: Georgia;
-    font-weight: lighter;    
+    font-family: Helvetica;
+    font-weight: lighter;
     color: #666666;
 }
 /* ===================================== */
 
 a.selected {
-    color: #C3C36E;
+    color: #4682BB;
 }
