@@ -4,7 +4,7 @@
     <link rel="icon" type="image/png" href="./img/fav_tasker.png" />
     <link rel="stylesheet" href="./css/jquery-ui-1.9.2.custom.css" type="text/css" />
     <link rel="stylesheet" href="./css/tasker.css" type="text/css" />
-    <script src ="./lib/jquery-1.7.2.min.js"  language="javascript" type = "text/javascript"></script>
+    <script src ="./lib/jquery-1.7.2.min.js" language="javascript" type = "text/javascript"></script>
     <script src ="./lib/jquery-ui-1.9.2.custom.min.js" type="text/javascript" charset="utf-8"></script>
     <!--script src="../../socket.io/socket.io.js"></script-->
     <script src ="http://localhost:8080/socket.io/socket.io.js"></script>
@@ -14,23 +14,22 @@
 </head>
 <body>
     <div style="width:90%; margin:0 auto;">
-        <div class = "title"><span> Tasker</span></div>
         <div class = "menu">
             <ul>
-                <li><a class = "newBoard"> New board</a> -<li>
-                <li><a class = "newTask"> New task</a> -</li>
-                <li><a class = "newProject"> New project</a> -</li>
-                <li><a class = "newUser"> New user</a></li>
+                <li><img class = "titleIcon" src="./img/fav_tasker.png"/><li>
+                <li><span class = "menuTitle"> Tasker</span> | <li>
+                <li><a class = "newBoard"> boards</a> | <li>
+                <li><a class = "newTask"> tasks</a> | </li>
+                <li><a class = "newProject"> projects</a> | </li>
+                <li><a class = "newUser"> users</a></li>
+                <li class="myboards">
+                    <select class = "text" name = "cmbMyBoards" id = "cmbMyBoards">
+                        <option value = ""></option>
+                    </select>
+                </li>
             </ul>
         </div>
         <div class = "main">
-            <div class = "myBoards">
-                <label class = "text" for = "cmbMyBoards">Boards </label>
-                <select class = "text" name = "cmbMyBoards" id = "cmbMyBoards">
-                    <option value = ""></option>
-                </select>
-            </div>
-
             <div class = "board">
                 <div class = "board_toDo droppableToDo ui-widget-content ui-state-default">
                     <div class = "subTitle"><span class = "title"> To do</span></div>

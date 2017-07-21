@@ -16,19 +16,14 @@ body {
 
 div.menu, div.title {
     margin: 0 auto;
-    width: 20%;
+    width: 100%;
 }
 
-div.title span {
-    vertical-align: middle;
-    font-size: 20pt;
-    border-bottom: medium none;
-    color: #666666;
-    font-family: Helvetica;
-    font-weight: lighter;
-    letter-spacing: 1.4em;
-    text-decoration: none;
-    text-transform: uppercase;
+span.menuTitle {
+    font-family: Helvetica Neue;
+    font-weight: bold;
+    font-size: 10pt;
+    color: #4682B4;
 }
 
 div.main
@@ -66,16 +61,15 @@ div.board_toDo span.title, div.board_progress span.title, div.board_finished spa
     margin-left: 5px;
     margin-top: 5px;
     margin-bottom: 10px;
-    font-size: 16pt;
-    font-family: Helvetica;
-    font-weight: lighter;
-    color: #666666;
+    font-size: 12pt;
+    font-family: Helvetica Neue;
+    color:#4682B4;
     vertical-align:bottom;
     text-align: center;
     float: left;
 }
 
-div.myBoards {
+li.myBoards {
     margin-left: 10px;
     margin-bottom: 10px;
     width: 80%;
@@ -83,13 +77,6 @@ div.myBoards {
     height: auto;
     overflow-y: auto;
     overflow-x: hidden;
-}
-
-div.myBoards label {
-    font-size: 10pt;
-    font-family: Helvetica;
-    font-weight: lighter;
-    color: #666666;
 }
 
 div.subTitle {
@@ -117,6 +104,13 @@ div.dialog {
 img.icon {
     height:24px;
     width:24px;
+    vertical-align: middle;
+    background-color: transparent;
+}
+
+img.titleIcon {
+    height:18px;
+    width:18px;
     vertical-align: middle;
     background-color: transparent;
 }
@@ -161,11 +155,10 @@ label.text {
 
 select.text {
     text-align: left;
-    font-family: Helvetica;
-    font-weight: lighter;
+    font-family: Helvetica Neue;
     font-size: 10pt;
-    width: 20%;
     margin-bottom: 5px;
+    color: #4682B4;
 }
 
 span.taskName
@@ -173,9 +166,9 @@ span.taskName
     display: inline-block;
     text-align: left;
     cursor: pointer;
-    font-family: Helvetica;
-    font-weight: lighter;
+    font-family: Helvetica Neue;
     font-size: 10pt;
+    font-weight: lighter;
     color: #4682B4;
 }
 
@@ -196,9 +189,8 @@ li
 li > a {
     cursor: pointer;
     font-size: 10pt;
-    font-family: Helvetica;
-    font-weight: lighter;
-    color: #666666;
+    font-family: Helvetica Neue;
+    color: #4682B4;
 }
 /* ===================================== */
 
