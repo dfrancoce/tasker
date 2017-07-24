@@ -732,10 +732,7 @@ button.ui-button::-moz-focus-inner { border: 0; padding: 0; } /* reset extra pad
   float: left;
   color:#666666;
   font-weight:lighter;
-  margin-top:5px;
-  margin-bottom:5px;
-  padding:5px;
-
+  font-size: 10pt;
 }
 .ui-dialog .ui-dialog-titlebar-close {
   position: absolute;

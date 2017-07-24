@@ -133,7 +133,7 @@ function stickTask(item, boardClassName) {
                     deleteTask(task);
                 }
 
-                $(img).closest('table').hide("explode", {}, 500, function() {
+                $(img).closest('table').hide("blind", {}, 500, function() {
                     $(this).remove();
                 });
 
